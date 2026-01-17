@@ -1,10 +1,10 @@
 
-import SortView from '../view/sort-view';
-import PointAddView from '../view/point-add/point-add-view';
-import PointEditView from '../view/point-edit/point-edit-view';
-import PointView from '../view/point/point-view';
+import SortView from '../view/sort-view/sort-view';
+import PointAddView from '../view/point-add-view/point-add-view';
+import PointEditView from '../view/point-edit-view/point-edit-view';
+import PointView from '../view/point-view/point-view';
 import ListView from '../view/list-view';
-import FiltersView from '../view/filters-view' ;
+import FiltersView from '../view/filters-view/filters-view' ;
 import CostView from '../view/cost-view' ;
 import { render } from '../render';
 
