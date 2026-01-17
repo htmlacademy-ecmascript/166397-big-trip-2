@@ -1,12 +1,9 @@
-import {createElement} from '../render';
+import { createElement } from '../../render';
+import { createPointEditTemplate } from './point-edit-template';
 
-function createListTemplate() {
-  return ('<ul class="trip-events__list"></ul>');
-}
-
-export default class ListView {
+export default class PointEditView {
   getTemplate() {
-    return createListTemplate();
+    return createPointEditTemplate();
   }
 
   getElement() {

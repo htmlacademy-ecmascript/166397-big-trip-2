@@ -1,8 +1,8 @@
 import { createElement } from '../render';
 
-const createTripInfoTemplate = () => (
-  '<section class="trip-main__trip-info  trip-info"></section>'
-);
+function createTripInfoTemplate() {
+  return ('<section class="trip-main__trip-info  trip-info"></section>');
+}
 
 export default class TripInfoView {
   getTemplate() {
