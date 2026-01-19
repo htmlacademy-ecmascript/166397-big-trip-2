@@ -11,22 +11,27 @@ import { render } from '../render';
 export default class BoardPresenter {
   listView = new ListView();
 
-  constructor({boardContainer, tripInfoContainer, filtersContainer}) {
+  constructor({boardContainer, tripInfoContainer, filtersContainer, pointsModel}) {
     this.boardContainer = boardContainer;
     this.tripInfoContainer = tripInfoContainer;
     this.filtersContainer = filtersContainer;
+    this.pointsModel = pointsModel;
   }
 
   init() {
+    this.boardPoints = [...this.pointsModel.getPoints()];
+    this.boardDestinations = [...this.pointsModel.getDestinations()];
+    this.boardOffers = [...this.pointsModel.getOffers()];
+
     render(new CostView(), this.tripInfoContainer);
     render(new FiltersView(), this.filtersContainer);
     render(new SortView(), this.boardContainer);
     render(this.listView, this.boardContainer);
-    render(new PointEditView(), this.listView.getElement());
+    render(new PointEditView({point: this.boardPoints[0], destinations: this.boardDestinations, offers: this.boardOffers}), this.listView.getElement());
     render(new PointAddView(), this.listView.getElement());
 
-    for (let i = 1; i <= 3; i++) {
-      render(new PointView(), this.listView.getElement());
+    for (let i = 1; i < this.boardPoints.length; i++) {
+      render(new PointView({point: this.boardPoints[i], destinations: this.boardDestinations, offers: this.boardOffers}), this.listView.getElement());
     }
   }
 }
