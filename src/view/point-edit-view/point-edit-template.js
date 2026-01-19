@@ -30,7 +30,7 @@ function getPictures(destinationPictures) {
 }
 
 function createPointEditTemplate(point, destinations, offersTypes) {
-  const { id, base_price: basePrice, date_from: dateFrom, date_to: dateTo, destination, offers, type } = point;
+  const { id, basePrice, dateFrom, dateTo, destination, offers, type } = point;
 
   const pointId = id || 0;
 

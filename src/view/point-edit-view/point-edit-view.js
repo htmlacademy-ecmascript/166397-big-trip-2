@@ -3,11 +3,11 @@ import { createPointEditTemplate } from './point-edit-template';
 
 const BLANK_POINT = {
   id: 0,
-  base_price: null,
-  date_from: new Date('2019-03-19T00:00:00.00Z'),
-  date_to: new Date('2019-03-19T00:00:00.00Z'),
+  basePrice: null,
+  dateFrom: new Date('2019-03-19T00:00:00.00Z'),
+  dateTo: new Date('2019-03-19T00:00:00.00Z'),
   destination: 4,
-  is_favorite: true,
+  isFavorite: true,
   offers: [
     0, 1
   ],

@@ -15,7 +15,7 @@ function createOffers(offers, currentOfferType) {
 }
 
 function createPointTemplate(point, destinations, offersTypes) {
-  const { base_price: basePrice, date_from: dateFrom, date_to: dateTo, destination, is_favorite: isFavorite, offers, type } = point;
+  const { basePrice, dateFrom, dateTo, destination, isFavorite, offers, type } = point;
 
   const date = humanizePointDate(dateFrom);
   const humanizedDateFrom = humanizePointTime(dateFrom);
