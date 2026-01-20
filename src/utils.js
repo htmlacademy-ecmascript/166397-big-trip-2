@@ -35,11 +35,7 @@ function humanizePointDateAndTime(pointDate) {
 }
 
 function getElementByKey(key, value, elements) {
-  return (value || value === 0) ? elements.find((item) => item[key] === value) : null;
+  return elements.find((item) => item[key] === value);
 }
 
-function getISODate(date) {
-  return date ? dayjs(date).format() : '';
-}
-
-export { getRandomArrayElement, humanizePointDate, humanizePointTime, humanizeDuration, humanizePointDateAndTime, getElementByKey, getISODate };
+export { getRandomArrayElement, humanizePointDate, humanizePointTime, humanizeDuration, humanizePointDateAndTime, getElementByKey };
