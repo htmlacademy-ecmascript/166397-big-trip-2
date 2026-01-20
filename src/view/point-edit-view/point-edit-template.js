@@ -1,19 +1,20 @@
 import { humanizePointDateAndTime, getElementByKey } from '../../utils';
 
-function createOffersTemplate(offers, currentOfferTypeList) {
+function createOffersTemplate(offers, currentOfferTypeElements) {
   return offers?.length ? `<section class="event__section  event__section--offers">
     <h3 class="event__section-title  event__section-title--offers">Offers</h3>
     <div class="event__available-offers">
-    ${currentOfferTypeList.map((offer) => {
-    const checked = offers.includes(offer.id) ? 'checked' : '';
+    ${currentOfferTypeElements.map((offer) => {
+    const {id, title, price} = offer;
+    const checked = offers.includes(id) ? 'checked' : '';
 
     return `
       <div class="event__offer-selector">
-        <input class="event__offer-checkbox  visually-hidden" id="event-offer-luggage-${offer.id}" type="checkbox" name="event-offer-luggage" ${checked}>
-        <label class="event__offer-label" for="event-offer-luggage-${offer.id}"">
-          <span class="event__offer-title">${offer.title}</span>
+        <input class="event__offer-checkbox  visually-hidden" id="event-offer-luggage-${id}" type="checkbox" name="event-offer-luggage" ${checked}>
+        <label class="event__offer-label" for="event-offer-luggage-${id}"">
+          <span class="event__offer-title">${title}</span>
           &plus;&euro;&nbsp;
-          <span class="event__offer-price">${offer.price}</span>
+          <span class="event__offer-price">${price}</span>
         </label>
       </div>`;
   }).join('')}
@@ -29,7 +30,7 @@ function createPictures(destinationPictures) {
   return destinationPictures?.length ?
     `<div class="event__photos-container">
       <div class="event__photos-tape">
-        ${destinationPictures.map((picture) => `<img class="event__photo" src="${picture.src}" alt="${picture.description}">`).join('')}
+        ${destinationPictures.map(({src, description}) => `<img class="event__photo" src="${src}" alt="${description}">`).join('')}
       </div>
     </div>` : '';
 }
@@ -38,7 +39,7 @@ function createPointEditTemplate(point, destinations, offersTypes) {
   const { id, basePrice, dateFrom, dateTo, destination, offers, type } = point;
 
   const currentDestination = getElementByKey('id', destination, destinations);
-  const currentOfferTypeList = getElementByKey('type', type, offersTypes).offers;
+  const currentOfferTypeElements = getElementByKey('type', type, offersTypes).offers;
 
   const pointId = id || 0;
   const currentType = type || 'flight';
@@ -47,7 +48,7 @@ function createPointEditTemplate(point, destinations, offersTypes) {
   const humanizedDateTo = humanizePointDateAndTime(dateTo);
   const {name: destinationName, description: destinationDescription, pictures: destinationPictures} = currentDestination || {};
 
-  const offersTemplate = createOffersTemplate(offers, currentOfferTypeList);
+  const offersTemplate = createOffersTemplate(offers, currentOfferTypeElements);
   const picturesTemplate = createPictures(destinationPictures);
   const destinationsListTemplate = createDestinationsTemplate(destinations);
 
