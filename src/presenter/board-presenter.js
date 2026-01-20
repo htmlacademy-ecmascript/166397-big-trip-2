@@ -1,6 +1,5 @@
 
 import SortView from '../view/sort-view/sort-view';
-import PointAddView from '../view/point-add-view/point-add-view';
 import PointEditView from '../view/point-edit-view/point-edit-view';
 import PointView from '../view/point-view/point-view';
 import ListView from '../view/list-view';
