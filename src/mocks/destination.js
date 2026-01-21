@@ -1,12 +1,12 @@
 const mockDestinations = [
   {
-    id: 0,
+    id: '0',
     description: 'Chamonix, is a beautiful city, a true asian pearl, with crowded streets.',
     name: 'Chamonix',
     pictures: []
   },
   {
-    id: 1,
+    id: '1',
     description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
     name: 'Paris',
     pictures: [
@@ -21,7 +21,7 @@ const mockDestinations = [
     ]
   },
   {
-    id: 2,
+    id: '2',
     description: 'Aliquam id orci ut lectus varius viverra. Nullam nunc ex, convallis sed finibus eget, sollicitudin eget ante.',
     name: 'London',
     pictures: [
@@ -32,7 +32,7 @@ const mockDestinations = [
     ]
   },
   {
-    id: 3,
+    id: '3',
     description: 'Phasellus eros mauris, condimentum sed nibh vitae, sodales efficitur ipsum.',
     name: 'Berlin',
     pictures: [
@@ -51,7 +51,7 @@ const mockDestinations = [
     ]
   },
   {
-    id: 4,
+    id: '4',
     description: 'Сondimentum sed nibh vitae',
     name: 'Lisbon',
     pictures: [

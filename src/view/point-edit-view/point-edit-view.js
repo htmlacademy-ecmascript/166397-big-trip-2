@@ -2,17 +2,18 @@ import { createElement } from '../../render';
 import { createPointEditTemplate } from './point-edit-template';
 
 const BLANK_POINT = {
-  id: 0,
+  id: '0',
   basePrice: null,
   dateFrom: new Date('2019-03-19T00:00:00.00Z'),
   dateTo: new Date('2019-03-19T00:00:00.00Z'),
-  destination: 4,
+  destination: '4',
   isFavorite: true,
   offers: [
-    0, 1
+    '0', '1'
   ],
   type: 'flight'
 };
+
 export default class PointEditView {
   constructor({point = BLANK_POINT, destinations, offers}) {
     this.point = point;

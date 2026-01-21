@@ -1,36 +1,33 @@
 import { humanizePointDate, humanizePointTime, humanizeDuration, getElementByKey } from '../../utils';
 
 function createOffersTemplate(offers, currentOfferTypeElements) {
-  return offers?.length ?
-    `<ul class="event__selected-offers">${offers.map((offer) => {
-      const currentOffer = getElementByKey('id', offer, currentOfferTypeElements);
-      const {title, price} = currentOffer;
+  return `
+    <ul class="event__selected-offers">
+    ${offers.map((offer) => {
+    const currentOffer = getElementByKey('id', offer, currentOfferTypeElements);
+    const {title, price} = currentOffer;
 
-      return `
-          <li class="event__offer">
-            <span class="event__offer-title">${title}</span>
-            &plus;&euro;&nbsp;
-            <span class="event__offer-price">${price}</span>
-          </li>
-        `;
-    }).join('')}
-    </ul>` : '';
+    return `
+      <li class="event__offer">
+        <span class="event__offer-title">${title}</span>
+        &plus;&euro;&nbsp;
+        <span class="event__offer-price">${price}</span>
+      </li>`;
+  }).join('')}
+    </ul>`;
 }
 
-function createPointTemplate(point, destinations, offersTypes) {
-  const { basePrice, dateFrom, dateTo, destination, isFavorite, offers, type } = point;
-
-  const currentDestination = getElementByKey('id', destination, destinations);
-  const currentOfferTypeElements = getElementByKey('type', type, offersTypes).offers;
+function createPointTemplate(point, destination, currentOfferTypeElements) {
+  const { base_price: basePrice, date_from: dateFrom, date_to: dateTo, is_favorite: isFavorite, offers, type } = point;
 
   const date = humanizePointDate(dateFrom);
   const humanizedDateFrom = humanizePointTime(dateFrom);
   const humanizedDateTo = humanizePointTime(dateFrom);
   const duration = humanizeDuration(dateFrom, dateTo);
-  const destinationName = currentDestination ? currentDestination.name : '';
+  const destinationName = destination ? destination.name : '';
   const price = basePrice || '';
   const favouriteActiveClass = isFavorite ? 'event__favorite-btn--active' : '';
-  const offersTemplate = createOffersTemplate(offers, currentOfferTypeElements);
+  const offersTemplate = offers?.length ? createOffersTemplate(offers, currentOfferTypeElements) : '';
 
   return (`
     <li class="trip-events__item">
