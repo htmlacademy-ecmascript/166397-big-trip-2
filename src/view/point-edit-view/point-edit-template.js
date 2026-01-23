@@ -3,13 +3,13 @@ import { DESTINATION_TYPES } from '../../const';
 
 function createEventTypesTemplate(activeType, pointId) {
   return DESTINATION_TYPES.map((type) => {
-    const capitalizeType = type[0].toUpperCase() + type.slice(1, type.length);
+    const capitalizedType = type[0].toUpperCase() + type.slice(1, type.length);
     const checked = type === activeType ? 'checked' : '';
 
     return `
       <div class="event__type-item">
         <input id="event-type-${type}-${pointId}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${type}" ${checked}>
-        <label class="event__type-label  event__type-label--${type}" for="event-type-${type}-${pointId}">${capitalizeType}</label>
+        <label class="event__type-label  event__type-label--${type}" for="event-type-${type}-${pointId}">${capitalizedType}</label>
       </div>`;
   }).join('');
 }
@@ -64,8 +64,8 @@ function createPointEditTemplate(point, destinations, currentOfferTypeElements) 
 
   const offersTemplate = offers?.length ? createOffersTemplate(offers, currentOfferTypeElements) : '';
   const picturesTemplate = pictures?.length ? createPictures(pictures) : '';
-  const destinationsListTemplate = destinations?.length ? createDestinationsTemplate(destinations) : '';
-  const eventTypesList = DESTINATION_TYPES?.length ? createEventTypesTemplate(currentType, pointId) : '';
+  const destinationsTemplate = destinations?.length ? createDestinationsTemplate(destinations) : '';
+  const eventTypesTemplate = DESTINATION_TYPES?.length ? createEventTypesTemplate(currentType, pointId) : '';
 
   return (`
     <li class="trip-events__item">
@@ -82,7 +82,7 @@ function createPointEditTemplate(point, destinations, currentOfferTypeElements) 
               <fieldset class="event__type-group">
                 <legend class="visually-hidden">Event type</legend>
 
-                ${eventTypesList}
+                ${eventTypesTemplate}
               </fieldset>
             </div>
           </div>
@@ -93,7 +93,7 @@ function createPointEditTemplate(point, destinations, currentOfferTypeElements) 
             </label>
             <input class="event__input  event__input--destination" id="event-destination-${pointId}" type="text" name="event-destination" value="${name}" list="destination-list-${pointId}">
             <datalist id="destination-list-${pointId}">
-              ${destinationsListTemplate}
+              ${destinationsTemplate}
             </datalist>
           </div>
 
