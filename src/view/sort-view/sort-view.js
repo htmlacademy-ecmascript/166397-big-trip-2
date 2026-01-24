@@ -1,9 +1,9 @@
 import { createElement } from '../../render';
-import { createPointEditTemplate } from './point-edit-template';
+import { createSortTemplate } from './sort-template';
 
-export default class PointEditView {
+export default class SortView {
   getTemplate() {
-    return createPointEditTemplate();
+    return createSortTemplate();
   }
 
   getElement() {

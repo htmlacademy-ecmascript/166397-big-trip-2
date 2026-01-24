@@ -1,5 +1,3 @@
-import { createElement } from '../render';
-
 function createFiltersTemplate() {
   return (`
     <form class="trip-filters" action="#" method="get">
@@ -28,20 +26,4 @@ function createFiltersTemplate() {
   `);
 }
 
-export default class FiltersView {
-  getTemplate() {
-    return createFiltersTemplate();
-  }
-
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
-    }
-
-    return this.element;
-  }
-
-  removeElement() {
-    this.element = null;
-  }
-}
+export { createFiltersTemplate };
