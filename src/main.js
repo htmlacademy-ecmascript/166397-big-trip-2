@@ -11,9 +11,8 @@ const tripContainerElement = mainElement.querySelector('.trip-events');
 const tripMainElement = headerElement.querySelector('.trip-main');
 
 const pointsModel = new PointsModel();
-pointsModel.init();
-const tripInfo = new TripInfoView();
 
+const tripInfo = new TripInfoView();
 const boardPresenter = new BoardPresenter({
   boardContainer: tripContainerElement,
   tripInfoContainer: tripInfo.getElement(),
@@ -23,5 +22,7 @@ const boardPresenter = new BoardPresenter({
 
 render(tripInfo, tripMainElement, RenderPosition.AFTERBEGIN);
 render(new TripView(), tripInfo.getElement());
-boardPresenter.init();
 
+pointsModel.init().finally(() => {
+  boardPresenter.init();
+});

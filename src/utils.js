@@ -23,7 +23,7 @@ function humanizeDuration(dateFrom, dateTo) {
   const formattedDateFrom = dayjs(dateFrom);
 
   const formattedDuration = dayjs.duration(formattedDateTo.diff(formattedDateFrom));
-  const days = formattedDuration.days();
+  const days = formattedDuration.days() ? formattedDuration.days() : Math.floor(formattedDuration.asDays());
   const hours = formattedDuration.hours();
   const minutes = formattedDuration.minutes();
 
