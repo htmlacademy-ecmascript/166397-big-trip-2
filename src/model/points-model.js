@@ -10,20 +10,16 @@ export default class PointsModel {
   destinations = [];
   offers = [];
 
-  init() {
-    return Promise.all([
-      Array.from({length: POINT_COUNT}, getRandomPoint),
-      getMockDestinations(),
-      getMockOffers()
-    ]).then(([points, destinations, offers]) => {
-      this.points = points;
-      this.destinations = destinations;
-      this.offers = offers;
-    }).catch(() => {
+  async init() {
+    try {
+      this.points = await Array.from({length: POINT_COUNT}, getRandomPoint);
+      this.destinations = await getMockDestinations();
+      this.offers = await getMockOffers();
+    } catch {
       this.points = [];
       this.destinations = [];
       this.offers = [];
-    });
+    }
   }
 
   getPoints() {
