@@ -1,4 +1,5 @@
-import { humanizePointDate, humanizePointTime, humanizeDuration, getElementByKey } from '../../utils';
+import { humanizePointDate, humanizePointTime, humanizeDuration } from '../../utils/point';
+import { getElementByKey } from '../../utils/common';
 
 function createOffersTemplate(offers, currentOfferTypeElements) {
   return `

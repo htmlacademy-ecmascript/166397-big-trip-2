@@ -1,14 +1,13 @@
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
-dayjs.extend(duration);
+import isSameBetween from 'dayjs/plugin/isBetween';
 
 const DATE_FORMATE = 'MMM D';
 const TIME_FORMATE = 'HH:mm';
 const DATE_AND_TIME_FORMATE = 'DD/MM/YY HH:mm';
 
-function getRandomArrayElement(elements) {
-  return elements[Math.floor(Math.random() * elements.length)];
-}
+dayjs.extend(duration);
+dayjs.extend(isSameBetween);
 
 function humanizePointDate(pointDate) {
   return pointDate ? dayjs(pointDate).format(DATE_FORMATE) : '';
@@ -18,11 +17,15 @@ function humanizePointTime(pointTime) {
   return pointTime ? dayjs(pointTime).format(TIME_FORMATE) : '';
 }
 
-function humanizeDuration(dateFrom, dateTo) {
+function getDuration(dateFrom, dateTo) {
   const formattedDateTo = dayjs(dateTo);
   const formattedDateFrom = dayjs(dateFrom);
 
-  const formattedDuration = dayjs.duration(formattedDateTo.diff(formattedDateFrom));
+  return dayjs.duration(formattedDateTo.diff(formattedDateFrom));
+}
+
+function humanizeDuration(dateFrom, dateTo) {
+  const formattedDuration = getDuration(dateFrom, dateTo);
   const days = formattedDuration.days() ? formattedDuration.days() : Math.floor(formattedDuration.asDays());
   const hours = formattedDuration.hours();
   const minutes = formattedDuration.minutes();
@@ -34,8 +37,16 @@ function humanizePointDateAndTime(pointDate) {
   return pointDate ? dayjs(pointDate).format(DATE_AND_TIME_FORMATE) : '';
 }
 
-function getElementByKey(key, value, elements) {
-  return elements.find((item) => item[key] === value);
+function isFuturePoint(dateFrom) {
+  return dateFrom && dayjs(dateFrom).isAfter(dayjs(), 'D');
 }
 
-export { getRandomArrayElement, humanizePointDate, humanizePointTime, humanizeDuration, humanizePointDateAndTime, getElementByKey };
+function isPresentPoint(dateFrom, dateTo) {
+  return dateFrom && dateTo && dayjs().isBetween(dateFrom, dateTo, 'D', '[]');
+}
+
+function isPastPoint(dateTo) {
+  return dateTo && dayjs(dateTo).isBefore(dayjs(), 'D');
+}
+
+export { humanizePointDate, humanizePointTime, getDuration, humanizeDuration, humanizePointDateAndTime, isFuturePoint, isPresentPoint, isPastPoint };

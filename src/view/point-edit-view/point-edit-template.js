@@ -1,9 +1,10 @@
-import { humanizePointDateAndTime, getElementByKey } from '../../utils';
+import { humanizePointDateAndTime } from '../../utils/point';
+import { getElementByKey, capitalizeString } from '../../utils/common';
 import { DESTINATION_TYPES } from '../../const';
 
 function createEventTypesTemplate(activeType, pointId) {
   return DESTINATION_TYPES.map((type) => {
-    const capitalizedType = type[0].toUpperCase() + type.slice(1, type.length);
+    const capitalizedType = capitalizeString(type);
     const checked = type === activeType ? 'checked' : '';
 
     return `
