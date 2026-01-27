@@ -5,42 +5,81 @@ import PointView from '../view/point-view/point-view';
 import ListView from '../view/list-view';
 import FiltersView from '../view/filters-view/filters-view';
 import CostView from '../view/cost-view';
-import { render } from '../render';
+import { render, replace } from '../framework/render';
 
 export default class BoardPresenter {
-  listView = new ListView();
+  #listView = new ListView();
+  #boardContainer = null;
+  #tripInfoContainer = null;
+  #filtersContainer = null;
+  #pointsModel = null;
 
   constructor({boardContainer, tripInfoContainer, filtersContainer, pointsModel}) {
-    this.boardContainer = boardContainer;
-    this.tripInfoContainer = tripInfoContainer;
-    this.filtersContainer = filtersContainer;
-    this.pointsModel = pointsModel;
-  }
-
-  render(boardPoints, boardDestinations) {
-    render(new CostView(), this.tripInfoContainer);
-    render(new FiltersView(), this.filtersContainer);
-    render(new SortView(), this.boardContainer);
-    render(this.listView, this.boardContainer);
-    render(new PointEditView({
-      point: boardPoints[0],
-      destinations: boardDestinations,
-      offers: this.pointsModel.getOffersByType(boardPoints[0].type)
-    }), this.listView.getElement());
-
-    for (let i = 1; i < boardPoints.length; i++) {
-      render(new PointView({
-        point: boardPoints[i],
-        destination: this.pointsModel.getDestinationById(boardPoints[i].destination),
-        offers: this.pointsModel.getOffersByType(boardPoints[i].type)
-      }), this.listView.getElement());
-    }
+    this.#boardContainer = boardContainer;
+    this.#tripInfoContainer = tripInfoContainer;
+    this.#filtersContainer = filtersContainer;
+    this.#pointsModel = pointsModel;
   }
 
   init() {
-    const boardPoints = [...this.pointsModel.getPoints()];
-    const boardDestinations = [...this.pointsModel.getDestinations()];
+    const boardPoints = [...this.#pointsModel.points];
+    const boardDestinations = [...this.#pointsModel.destinations];
 
-    this.render(boardPoints, boardDestinations);
+    this.#render(boardPoints, boardDestinations);
+  }
+
+  #render(boardPoints, boardDestinations) {
+    render(new CostView(), this.#tripInfoContainer);
+    render(new FiltersView(), this.#filtersContainer);
+    render(new SortView(), this.#boardContainer);
+    render(this.#listView, this.#boardContainer);
+
+    for (let i = 1; i < boardPoints.length; i++) {
+      this.#renderPoint(boardPoints[i], boardDestinations);
+    }
+  }
+
+  #renderPoint(point, boardDestinations) {
+    function documentKeydownHandler(evt) {
+      if (evt.key === 'Escape') {
+        evt.preventDefault();
+        replaceFormToPoint();
+        document.removeEventListener('keydown', documentKeydownHandler);
+      }
+    }
+
+    const pointComponent = new PointView({
+      point: point,
+      destination: this.#pointsModel.getDestinationById(point.destination),
+      offers: this.#pointsModel.getOffersByType(point.type),
+      onRollupClick: () => {
+        replacePointToForm();
+        document.addEventListener('keydown', documentKeydownHandler);
+      }
+    });
+
+    const pointEditComponent = new PointEditView({
+      point: point,
+      destinations: boardDestinations,
+      offers: this.#pointsModel.getOffersByType(point.type),
+      onRollupClick: () => {
+        replaceFormToPoint();
+        document.removeEventListener('keydown', documentKeydownHandler);
+      },
+      onFormSubmit: () => {
+        replaceFormToPoint();
+        document.removeEventListener('keydown', documentKeydownHandler);
+      }
+    });
+
+    function replacePointToForm() {
+      replace(pointEditComponent, pointComponent);
+    }
+
+    function replaceFormToPoint() {
+      replace(pointComponent, pointEditComponent);
+    }
+
+    render(pointComponent, this.#listView.element);
   }
 }
