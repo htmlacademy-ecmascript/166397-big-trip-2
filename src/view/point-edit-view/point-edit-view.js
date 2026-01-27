@@ -1,5 +1,5 @@
-import { createElement } from '../../render';
 import { createPointEditTemplate } from './point-edit-template';
+import AbstractView from '../../framework/view/abstract-view';
 
 const BLANK_POINT = {
   id: '0',
@@ -14,26 +14,36 @@ const BLANK_POINT = {
   type: 'flight'
 };
 
-export default class PointEditView {
-  constructor({point = BLANK_POINT, destinations, offers}) {
-    this.point = point;
-    this.destinations = destinations;
-    this.offers = offers;
+export default class PointEditView extends AbstractView {
+  #point = null;
+  #destinations = null;
+  #offers = null;
+  #handleRollupClick = null;
+  #handleFormSubmit = null;
+
+  constructor({point = BLANK_POINT, destinations, offers, onRollupClick, onFormSubmit}) {
+    super();
+    this.#point = point;
+    this.#destinations = destinations;
+    this.#offers = offers;
+    this.#handleRollupClick = onRollupClick;
+    this.#handleFormSubmit = onFormSubmit;
+
+    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#rollupClickHandler);
+    this.element.querySelector('form').addEventListener('submit', this.#formSubmitHandler);
   }
 
-  getTemplate() {
-    return createPointEditTemplate(this.point, this.destinations, this.offers);
+  get template() {
+    return createPointEditTemplate(this.#point, this.#destinations, this.#offers);
   }
 
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
-    }
+  #rollupClickHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleRollupClick();
+  };
 
-    return this.element;
-  }
-
-  removeElement() {
-    this.element = null;
-  }
+  #formSubmitHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleFormSubmit();
+  };
 }

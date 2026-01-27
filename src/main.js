@@ -2,7 +2,7 @@ import BoardPresenter from './presenter/board-presenter';
 import TripInfoView from './view/trip-info-view';
 import TripView from './view/trip-view';
 import PointsModel from './model/points-model';
-import { render, RenderPosition } from './render';
+import { render, RenderPosition } from './framework/render';
 
 const headerElement = document.querySelector('.page-header');
 const mainElement = document.querySelector('.page-main');
@@ -15,13 +15,13 @@ const pointsModel = new PointsModel();
 const tripInfo = new TripInfoView();
 const boardPresenter = new BoardPresenter({
   boardContainer: tripContainerElement,
-  tripInfoContainer: tripInfo.getElement(),
+  tripInfoContainer: tripInfo.element,
   filtersContainer: filtersContainerElement,
   pointsModel,
 });
 
 render(tripInfo, tripMainElement, RenderPosition.AFTERBEGIN);
-render(new TripView(), tripInfo.getElement());
+render(new TripView(), tripInfo.element);
 
 pointsModel.init().finally(() => {
   boardPresenter.init();
