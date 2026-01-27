@@ -5,6 +5,7 @@ import PointView from '../view/point-view/point-view';
 import ListView from '../view/list-view';
 import FiltersView from '../view/filters-view/filters-view';
 import CostView from '../view/cost-view';
+import ListEmptyView from '../view/list-empty-view';
 import { render, replace } from '../framework/render';
 
 export default class BoardPresenter {
@@ -33,6 +34,11 @@ export default class BoardPresenter {
     render(new FiltersView(), this.#filtersContainer);
     render(new SortView(), this.#boardContainer);
     render(this.#listView, this.#boardContainer);
+
+    if (!boardPoints.length) {
+      render(new ListEmptyView(), this.#boardContainer);
+      return;
+    }
 
     for (let i = 1; i < boardPoints.length; i++) {
       this.#renderPoint(boardPoints[i], boardDestinations);

@@ -1,14 +1,11 @@
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
-dayjs.extend(duration);
 
 const DATE_FORMATE = 'MMM D';
 const TIME_FORMATE = 'HH:mm';
 const DATE_AND_TIME_FORMATE = 'DD/MM/YY HH:mm';
 
-function getRandomArrayElement(elements) {
-  return elements[Math.floor(Math.random() * elements.length)];
-}
+dayjs.extend(duration);
 
 function humanizePointDate(pointDate) {
   return pointDate ? dayjs(pointDate).format(DATE_FORMATE) : '';
@@ -34,8 +31,4 @@ function humanizePointDateAndTime(pointDate) {
   return pointDate ? dayjs(pointDate).format(DATE_AND_TIME_FORMATE) : '';
 }
 
-function getElementByKey(key, value, elements) {
-  return elements.find((item) => item[key] === value);
-}
-
-export { getRandomArrayElement, humanizePointDate, humanizePointTime, humanizeDuration, humanizePointDateAndTime, getElementByKey };
+export { humanizePointDate, humanizePointTime, humanizeDuration, humanizePointDateAndTime };

@@ -1,7 +1,7 @@
 import { getRandomPoint } from '../mocks/point';
 import { getMockOffers } from '../mocks/offer';
 import { getMockDestinations } from '../mocks/destination';
-import { getElementByKey } from '../utils';
+import { getElementByKey } from '../utils/common';
 
 const POINT_COUNT = 4;
 

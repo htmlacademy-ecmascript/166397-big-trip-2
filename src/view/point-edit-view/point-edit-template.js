@@ -1,4 +1,5 @@
-import { humanizePointDateAndTime, getElementByKey } from '../../utils';
+import { humanizePointDateAndTime } from '../../utils/point';
+import { getElementByKey } from '../../utils/common';
 import { DESTINATION_TYPES } from '../../const';
 
 function createEventTypesTemplate(activeType, pointId) {
