@@ -6,4 +6,8 @@ function getElementByKey(key, value, elements) {
   return elements.find((item) => item[key] === value);
 }
 
-export { getRandomArrayElement, getElementByKey };
+function capitalizeString(value) {
+  return value[0].toUpperCase() + value.slice(1, value.length);
+}
+
+export { getRandomArrayElement, getElementByKey, capitalizeString };

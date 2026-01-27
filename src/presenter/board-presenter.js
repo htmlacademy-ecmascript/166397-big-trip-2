@@ -7,6 +7,8 @@ import FiltersView from '../view/filters-view/filters-view';
 import CostView from '../view/cost-view';
 import ListEmptyView from '../view/list-empty-view';
 import { render, replace } from '../framework/render';
+import { generateFilters } from '../mocks/filter';
+import { generateSorting } from '../mocks/sorting';
 
 export default class BoardPresenter {
   #listView = new ListView();
@@ -25,14 +27,16 @@ export default class BoardPresenter {
   init() {
     const boardPoints = [...this.#pointsModel.points];
     const boardDestinations = [...this.#pointsModel.destinations];
+    const filters = generateFilters(boardPoints);
+    const sortingItems = generateSorting(boardPoints);
 
-    this.#render(boardPoints, boardDestinations);
+    this.#render(boardPoints, boardDestinations, filters, sortingItems);
   }
 
-  #render(boardPoints, boardDestinations) {
+  #render(boardPoints, boardDestinations, filters, sortingItems) {
     render(new CostView(), this.#tripInfoContainer);
-    render(new FiltersView(), this.#filtersContainer);
-    render(new SortView(), this.#boardContainer);
+    render(new FiltersView({filters}), this.#filtersContainer);
+    render(new SortView({sortingItems}), this.#boardContainer);
     render(this.#listView, this.#boardContainer);
 
     if (!boardPoints.length) {

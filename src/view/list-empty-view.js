@@ -1,11 +1,19 @@
 import AbstractView from '../framework/view/abstract-view';
+const TEXT_DEFAULT = 'Click New Event to create your first point';
 
-function createListEmptyTemplate() {
-  return '<p class="trip-events__msg">Click New Event to create your first point</p>';
+function createListEmptyTemplate(text) {
+  return `<p class="trip-events__msg">${text}</p>`;
 }
 
 export default class ListEmptyView extends AbstractView {
+  #text = null;
+
+  constructor({text} = {}) {
+    super();
+    this.#text = text || TEXT_DEFAULT;
+  }
+
   get template() {
-    return createListEmptyTemplate();
+    return createListEmptyTemplate(this.#text);
   }
 }
