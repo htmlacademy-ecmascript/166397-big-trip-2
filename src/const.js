@@ -1,4 +1,5 @@
 const DESTINATION_TYPES = ['taxi', 'bus', 'train', 'ship', 'drive', 'flight', 'check-in', 'sightseeing', 'restaurant'];
+const POINT_STATES = ['view', 'edit'];
 
 const FilterTypes = {
   EVERYTHING: 'Everything',
@@ -15,4 +16,4 @@ const SortingTypes = {
   OFFERS: 'offers'
 };
 
-export { DESTINATION_TYPES, FilterTypes, SortingTypes };
+export { DESTINATION_TYPES, FilterTypes, SortingTypes, POINT_STATES };
