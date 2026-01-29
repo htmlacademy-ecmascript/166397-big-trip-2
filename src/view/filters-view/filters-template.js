@@ -1,11 +1,12 @@
 import { capitalizeString } from '../../utils/common';
 
-function createFilterTemplate({type}) {
+function createFilterTemplate({type, count}) {
   const capitalizedType = capitalizeString(type);
+  const disabled = count !== 0 ? '' : 'disabled';
 
   return `
     <div class="trip-filters__filter">
-      <input id="filter-${type}" class="trip-filters__filter-input  visually-hidden" type="radio" name="trip-filter" value="${type}">
+      <input id="filter-${type}" class="trip-filters__filter-input  visually-hidden" type="radio" name="trip-filter" value="${type}" ${disabled}>
       <label class="trip-filters__filter-label" for="filter-${type}">${capitalizedType}</label>
     </div>`;
 }

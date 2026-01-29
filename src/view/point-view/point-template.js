@@ -23,7 +23,7 @@ function createPointTemplate(point, destination, currentOfferTypeElements) {
 
   const date = humanizePointDate(dateFrom);
   const humanizedDateFrom = humanizePointTime(dateFrom);
-  const humanizedDateTo = humanizePointTime(dateFrom);
+  const humanizedDateTo = humanizePointTime(dateTo);
   const duration = humanizeDuration(dateFrom, dateTo);
   const destinationName = destination ? destination.name : '';
   const price = basePrice || '';
