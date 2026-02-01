@@ -1,4 +1,5 @@
 /* eslint-disable camelcase */
+import { nanoid } from 'nanoid';
 import { getRandomArrayElement } from '../utils/common';
 
 const mockPoints = [
@@ -8,36 +9,36 @@ const mockPoints = [
     date_from: '2022-03-12T17:15:55.845Z',
     date_to: '2022-03-12T17:17:55.845Z',
     destination: '0',
-    isFavorite: false,
+    is_favorite: false,
     offers: [
       '0'
     ],
     type: 'taxi'
   },
   {
-    id: 1,
+    id: '1',
     base_price: 700,
     date_from: '2019-06-12T12:10:55.845Z',
     date_to: '2019-06-12T15:22:13.375Z',
     destination: '1',
-    isFavorite: false,
+    is_favorite: false,
     offers: [],
     type: 'bus'
   },
   {
-    id: 2,
+    id: '2',
     base_price: 300,
     date_from: '2020-07-10T15:31:16.845Z',
     date_to: '2020-07-10T23:56:13.375Z',
     destination: '3',
-    isFavorite: true,
+    is_favorite: true,
     offers: [
       '1', '2'
     ],
     type: 'train'
   },
   {
-    id: 3,
+    id: '3',
     base_price: 500,
     date_from: '2020-09-01T14:15:13.845Z',
     date_to: '2020-09-02T19:12:13.375Z',
@@ -49,12 +50,12 @@ const mockPoints = [
     type: 'restaurant'
   },
   {
-    id: 4,
+    id: '4',
     base_price: 500,
     date_from: '2020-05-02T08:25:15.845Z',
     date_to: '2020-05-02T16:22:23.375Z',
     destination: '4',
-    isFavorite: true,
+    is_favorite: true,
     offers: [
       '0', '1'
     ],
@@ -63,7 +64,10 @@ const mockPoints = [
 ];
 
 function getRandomPoint() {
-  return getRandomArrayElement(mockPoints);
+  return {
+    ...getRandomArrayElement(mockPoints),
+    id: nanoid()
+  };
 }
 
 export { getRandomPoint };

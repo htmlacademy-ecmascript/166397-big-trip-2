@@ -1,15 +1,13 @@
 
 import SortView from '../view/sort-view/sort-view';
-import PointEditView from '../view/point-edit-view/point-edit-view';
-import PointView from '../view/point-view/point-view';
 import ListView from '../view/list-view';
 import FiltersView from '../view/filters-view/filters-view';
 import CostView from '../view/cost-view';
 import ListEmptyView from '../view/list-empty-view';
-import { render, replace } from '../framework/render';
+import { render } from '../framework/render';
 import { generateFilters } from '../mocks/filter';
 import { generateSorting } from '../mocks/sorting';
-import { POINT_STATES } from '../const';
+import PointPresenter from './point-presenter';
 
 export default class BoardPresenter {
   #listView = new ListView();
@@ -17,6 +15,7 @@ export default class BoardPresenter {
   #tripInfoContainer = null;
   #filtersContainer = null;
   #pointsModel = null;
+  #pointPresenters = new Map();
 
   constructor({boardContainer, tripInfoContainer, filtersContainer, pointsModel}) {
     this.#boardContainer = boardContainer;
@@ -31,70 +30,74 @@ export default class BoardPresenter {
     const filters = generateFilters(boardPoints);
     const sortingItems = generateSorting(boardPoints);
 
-    this.#render(boardPoints, boardDestinations, filters, sortingItems);
+    this.#renderBoard(boardPoints, boardDestinations, filters, sortingItems);
   }
 
-  #render(boardPoints, boardDestinations, filters, sortingItems) {
+  #renderCost() {
     render(new CostView(), this.#tripInfoContainer);
-    render(new FiltersView({filters}), this.#filtersContainer);
-    render(new SortView({sortingItems}), this.#boardContainer);
+  }
+
+  #renderFilters(filters) {
+    render(new FiltersView({ filters }), this.#filtersContainer);
+  }
+
+  #renderSort(sortingItems) {
+    render(new SortView({ sortingItems }), this.#boardContainer);
+  }
+
+  #renderEmptyList() {
+    render(new ListEmptyView(), this.#boardContainer);
+  }
+
+  #renderPoint(point, boardDestinations, boardPoints) {
+    const destination = this.#pointsModel.getDestinationById(point.destination);
+    const offers = this.#pointsModel.getOffersByType(point.type);
+
+    const dataChangeHandler = (newPoint) => {
+      boardPoints = boardPoints.map((item) => item.id === newPoint.id ? newPoint : item);
+      this.#pointPresenters.get(newPoint.id).init(newPoint, destination, offers);
+    };
+
+    const pointPresenter = new PointPresenter({
+      boardDestinations: boardDestinations,
+      listContainer: this.#listView.element,
+
+      onDataChange: dataChangeHandler
+    });
+
+    pointPresenter.init(point, destination, offers);
+
+    this.#pointPresenters.set(point.id, pointPresenter);
+  }
+
+  #renderPoints(boardPoints, boardDestinations) {
+    boardPoints.forEach((point) => {
+      this.#renderPoint(point, boardDestinations, boardPoints);
+    });
+  }
+
+  #clearPointsList() {
+    this.#pointPresenters.forEach((presenter) => {
+      presenter.destroy();
+    });
+
+    this.#pointPresenters.clear();
+  }
+
+  #renderPointsList(boardPoints, boardDestinations) {
     render(this.#listView, this.#boardContainer);
 
     if (!boardPoints.length) {
-      render(new ListEmptyView(), this.#boardContainer);
-      return;
+      this.#renderEmptyList();
     }
 
-    for (let i = 1; i < boardPoints.length; i++) {
-      this.#renderPoint(boardPoints[i], boardDestinations);
-    }
+    this.#renderPoints(boardPoints, boardDestinations);
   }
 
-  #renderPoint(point, boardDestinations) {
-    function documentKeydownHandler(evt) {
-      if (evt.key === 'Escape') {
-        evt.preventDefault();
-        changeStatePoint('view');
-        document.removeEventListener('keydown', documentKeydownHandler);
-      }
-    }
-
-    const pointComponent = new PointView({
-      point: point,
-      destination: this.#pointsModel.getDestinationById(point.destination),
-      offers: this.#pointsModel.getOffersByType(point.type),
-      onRollupClick: () => {
-        changeStatePoint('edit');
-        document.addEventListener('keydown', documentKeydownHandler);
-      }
-    });
-
-    const pointEditComponent = new PointEditView({
-      point: point,
-      destinations: boardDestinations,
-      offers: this.#pointsModel.getOffersByType(point.type),
-      onRollupClick: () => {
-        changeStatePoint('view');
-        document.removeEventListener('keydown', documentKeydownHandler);
-      },
-      onFormSubmit: () => {
-        changeStatePoint('view');
-        document.removeEventListener('keydown', documentKeydownHandler);
-      }
-    });
-
-    function changeStatePoint(state) {
-      if (!POINT_STATES.includes(state)) {
-        return;
-      }
-
-      if (state === 'edit') {
-        replace(pointEditComponent, pointComponent);
-      } else {
-        replace(pointComponent, pointEditComponent);
-      }
-    }
-
-    render(pointComponent, this.#listView.element);
+  #renderBoard(boardPoints, boardDestinations, filters, sortingItems) {
+    this.#renderCost();
+    this.#renderFilters(filters);
+    this.#renderSort(sortingItems);
+    this.#renderPointsList(boardPoints, boardDestinations);
   }
 }
