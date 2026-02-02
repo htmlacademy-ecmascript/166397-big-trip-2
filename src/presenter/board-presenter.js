@@ -7,6 +7,7 @@ import ListEmptyView from '../view/list-empty-view';
 import { render } from '../framework/render';
 import { generateFilters } from '../mocks/filter';
 import { generateSorting } from '../mocks/sorting';
+import { updateElement } from '../utils/common';
 import PointPresenter from './point-presenter';
 
 export default class BoardPresenter {
@@ -15,6 +16,9 @@ export default class BoardPresenter {
   #tripInfoContainer = null;
   #filtersContainer = null;
   #pointsModel = null;
+  #boardPoints = [];
+  #filters = [];
+  #sortingItems = [];
   #pointPresenters = new Map();
 
   constructor({boardContainer, tripInfoContainer, filtersContainer, pointsModel}) {
@@ -25,54 +29,45 @@ export default class BoardPresenter {
   }
 
   init() {
-    const boardPoints = [...this.#pointsModel.points];
-    const boardDestinations = [...this.#pointsModel.destinations];
-    const filters = generateFilters(boardPoints);
-    const sortingItems = generateSorting(boardPoints);
+    this.#boardPoints = [...this.#pointsModel.points];
+    this.#filters = generateFilters(this.#boardPoints);
+    this.#sortingItems = generateSorting(this.#boardPoints);
 
-    this.#renderBoard(boardPoints, boardDestinations, filters, sortingItems);
+    this.#renderBoard();
   }
 
   #renderCost() {
     render(new CostView(), this.#tripInfoContainer);
   }
 
-  #renderFilters(filters) {
-    render(new FiltersView({ filters }), this.#filtersContainer);
+  #renderFilters() {
+    render(new FiltersView({ filters: this.#filters }), this.#filtersContainer);
   }
 
-  #renderSort(sortingItems) {
-    render(new SortView({ sortingItems }), this.#boardContainer);
+  #renderSort() {
+    render(new SortView({ sortingItems: this.#sortingItems }), this.#boardContainer);
   }
 
   #renderEmptyList() {
     render(new ListEmptyView(), this.#boardContainer);
   }
 
-  #renderPoint(point, boardDestinations, boardPoints) {
-    const destination = this.#pointsModel.getDestinationById(point.destination);
-    const offers = this.#pointsModel.getOffersByType(point.type);
-
-    const dataChangeHandler = (newPoint) => {
-      boardPoints = boardPoints.map((item) => item.id === newPoint.id ? newPoint : item);
-      this.#pointPresenters.get(newPoint.id).init(newPoint, destination, offers);
-    };
-
+  #renderPoint(point) {
     const pointPresenter = new PointPresenter({
-      boardDestinations: boardDestinations,
       listContainer: this.#listView.element,
-
-      onDataChange: dataChangeHandler
+      pointsModel: this.#pointsModel,
+      onDataChange: this.#dataChangeHandler,
+      onModeChange: this.#handleModeChange
     });
 
-    pointPresenter.init(point, destination, offers);
+    pointPresenter.init(point);
 
     this.#pointPresenters.set(point.id, pointPresenter);
   }
 
-  #renderPoints(boardPoints, boardDestinations) {
-    boardPoints.forEach((point) => {
-      this.#renderPoint(point, boardDestinations, boardPoints);
+  #renderPoints() {
+    this.#boardPoints.forEach((point) => {
+      this.#renderPoint(point);
     });
   }
 
@@ -84,20 +79,31 @@ export default class BoardPresenter {
     this.#pointPresenters.clear();
   }
 
-  #renderPointsList(boardPoints, boardDestinations) {
+  #renderPointsList() {
     render(this.#listView, this.#boardContainer);
 
-    if (!boardPoints.length) {
+    if (!this.#boardPoints.length) {
       this.#renderEmptyList();
     }
 
-    this.#renderPoints(boardPoints, boardDestinations);
+    this.#renderPoints();
   }
 
-  #renderBoard(boardPoints, boardDestinations, filters, sortingItems) {
+  #renderBoard() {
     this.#renderCost();
-    this.#renderFilters(filters);
-    this.#renderSort(sortingItems);
-    this.#renderPointsList(boardPoints, boardDestinations);
+    this.#renderFilters();
+    this.#renderSort();
+    this.#renderPointsList();
   }
+
+  #dataChangeHandler = (newPoint) => {
+    this.#boardPoints = updateElement(this.#boardPoints, newPoint);
+    this.#pointPresenters.get(newPoint.id).init(newPoint);
+  };
+
+  #handleModeChange = () => {
+    this.#pointPresenters.forEach((presenter) => {
+      presenter.clearMode();
+    });
+  };
 }

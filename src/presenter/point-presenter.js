@@ -1,7 +1,7 @@
 import { render, replace, remove } from '../framework/render';
 import PointEditView from '../view/point-edit-view/point-edit-view';
 import PointView from '../view/point-view/point-view';
-import { POINT_STATES } from '../const';
+import { PointMode } from '../const';
 
 export default class PointPresenter {
   #point = null;
@@ -12,17 +12,22 @@ export default class PointPresenter {
   #pointComponent = null;
   #pointEditComponent = null;
   #handleDataChange = null;
+  #pointsModel = null;
+  #handleModeChange = null;
+  #mode = PointMode.DEFAULT;
 
-  constructor({ boardDestinations, listContainer, onDataChange }) {
-    this.#boardDestinations = boardDestinations;
+  constructor({ listContainer, onDataChange, pointsModel, onModeChange }) {
     this.#listContainer = listContainer;
     this.#handleDataChange = onDataChange;
+    this.#pointsModel = pointsModel;
+    this.#handleModeChange = onModeChange;
   }
 
-  init(point, destination, offers) {
+  init(point) {
     this.#point = point;
-    this.#destination = destination;
-    this.#offers = offers;
+    this.#destination = this.#pointsModel.getDestinationById(this.#point.destination);
+    this.#boardDestinations = [...this.#pointsModel.destinations];
+    this.#offers = this.#pointsModel.getOffersByType(point.type);
 
     const prevPointComponent = this.#pointComponent;
     const prevPointEditComponent = this.#pointEditComponent;
@@ -48,11 +53,11 @@ export default class PointPresenter {
       return;
     }
 
-    if (this.#listContainer.contains(prevPointComponent.element)) {
+    if (this.#mode === PointMode.DEFAULT) {
       replace(this.#pointComponent, prevPointComponent);
     }
 
-    if (this.#listContainer.contains(prevPointEditComponent.element)) {
+    if (this.#mode === PointMode.EDITING) {
       replace(this.#pointEditComponent, prevPointEditComponent);
     }
 
@@ -65,37 +70,45 @@ export default class PointPresenter {
     remove(this.#pointEditComponent);
   }
 
-  #changeStatePoint(state) {
-    if (!POINT_STATES.includes(state)) {
-      return;
-    }
-
-    if (state === 'edit') {
+  #changeStatePoint(mode) {
+    if (mode === PointMode.EDITING) {
       replace(this.#pointEditComponent, this.#pointComponent);
       document.addEventListener('keydown', this.#documentKeydownHandler);
+
+      this.#mode = PointMode.EDITING;
     } else {
       replace(this.#pointComponent, this.#pointEditComponent);
       document.removeEventListener('keydown', this.#documentKeydownHandler);
+
+      this.#mode = PointMode.DEFAULT;
+    }
+  }
+
+  clearMode() {
+    if (this.#mode !== PointMode.DEFAULT) {
+      this.#changeStatePoint(PointMode.DEFAULT);
     }
   }
 
   #documentKeydownHandler = (evt) => {
     if (evt.key === 'Escape') {
       evt.preventDefault();
-      this.#changeStatePoint('view');
+      this.#changeStatePoint(PointMode.DEFAULT);
     }
   };
 
   #handleRollupPointClick = () => {
-    this.#changeStatePoint('edit');
+    this.#handleModeChange();
+    this.#changeStatePoint(PointMode.EDITING);
+
   };
 
   #handleRollupPointEditClick = () => {
-    this.#changeStatePoint('view');
+    this.#changeStatePoint(PointMode.DEFAULT);
   };
 
   #handleFormSubmit = () => {
-    this.#changeStatePoint('view');
+    this.#changeStatePoint(PointMode.DEFAULT);
   };
 
   #handleFavoriteClick = () => {
