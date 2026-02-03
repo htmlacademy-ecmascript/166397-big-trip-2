@@ -1,12 +1,12 @@
 import dayjs from 'dayjs';
-import isSameBetween from 'dayjs/plugin/isBetween';
+import isBetween from 'dayjs/plugin/isBetween';
 import { getDuration } from './common';
 
 const DATE_FORMATE = 'MMM D';
 const TIME_FORMATE = 'HH:mm';
 const DATE_AND_TIME_FORMATE = 'DD/MM/YY HH:mm';
 
-dayjs.extend(isSameBetween);
+dayjs.extend(isBetween);
 
 function humanizePointDate(pointDate) {
   return pointDate ? dayjs(pointDate).format(DATE_FORMATE) : '';

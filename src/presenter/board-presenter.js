@@ -7,7 +7,8 @@ import ListEmptyView from '../view/list-empty-view';
 import { render } from '../framework/render';
 import { generateFilters } from '../mocks/filter';
 import { generateSorting } from '../mocks/sorting';
-import { updateElement } from '../utils/common';
+import { updateElement, getElementByKey } from '../utils/common';
+import { SortingType } from '../const';
 import PointPresenter from './point-presenter';
 
 export default class BoardPresenter {
@@ -20,6 +21,7 @@ export default class BoardPresenter {
   #filters = [];
   #sortingItems = [];
   #pointPresenters = new Map();
+  #currentSortType = SortingType.DAY;
 
   constructor({boardContainer, tripInfoContainer, filtersContainer, pointsModel}) {
     this.#boardContainer = boardContainer;
@@ -45,7 +47,10 @@ export default class BoardPresenter {
   }
 
   #renderSort() {
-    render(new SortView({ sortingItems: this.#sortingItems }), this.#boardContainer);
+    render(new SortView({
+      sortingItems: this.#sortingItems,
+      onSortChange: this.#sortChangeHandler
+    }), this.#boardContainer);
   }
 
   #renderEmptyList() {
@@ -66,6 +71,8 @@ export default class BoardPresenter {
   }
 
   #renderPoints() {
+    this.#sortPoints();
+
     this.#boardPoints.forEach((point) => {
       this.#renderPoint(point);
     });
@@ -80,13 +87,17 @@ export default class BoardPresenter {
   }
 
   #renderPointsList() {
-    render(this.#listView, this.#boardContainer);
-
     if (!this.#boardPoints.length) {
       this.#renderEmptyList();
+      return;
     }
 
+    render(this.#listView, this.#boardContainer);
     this.#renderPoints();
+  }
+
+  #sortPoints() {
+    this.#boardPoints = getElementByKey('type', this.#currentSortType, this.#sortingItems).points;
   }
 
   #renderBoard() {
@@ -105,5 +116,16 @@ export default class BoardPresenter {
     this.#pointPresenters.forEach((presenter) => {
       presenter.clearMode();
     });
+  };
+
+  #sortChangeHandler = (sortType) => {
+    if (this.#currentSortType === sortType) {
+      return;
+    }
+
+    this.#currentSortType = sortType;
+
+    this.#clearPointsList();
+    this.#renderPointsList();
   };
 }
