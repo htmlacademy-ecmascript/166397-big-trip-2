@@ -42,7 +42,7 @@ function createDestinationsTemplate(destinations) {
   return destinations.map((destination) => `<option value="${destination.name}"></option>`).join('');
 }
 
-function createPictures(pictures) {
+function createPicturesTemplate(pictures) {
   return `
     <div class="event__photos-container">
       <div class="event__photos-tape">
@@ -64,7 +64,7 @@ function createPointEditTemplate(point, destinations, currentOfferTypeElements) 
   const {name, description, pictures} = currentDestination || {};
 
   const offersTemplate = offers?.length ? createOffersTemplate(offers, currentOfferTypeElements) : '';
-  const picturesTemplate = pictures?.length ? createPictures(pictures) : '';
+  const picturesTemplate = pictures?.length ? createPicturesTemplate(pictures) : '';
   const destinationsTemplate = destinations?.length ? createDestinationsTemplate(destinations) : '';
   const eventTypesTemplate = DESTINATION_TYPES?.length ? createEventTypesTemplate(currentType, pointId) : '';
 
