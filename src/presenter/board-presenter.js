@@ -1,14 +1,14 @@
 
 import SortView from '../view/sort-view/sort-view';
-import PointEditView from '../view/point-edit-view/point-edit-view';
-import PointView from '../view/point-view/point-view';
 import ListView from '../view/list-view';
 import FiltersView from '../view/filters-view/filters-view';
 import CostView from '../view/cost-view';
 import ListEmptyView from '../view/list-empty-view';
-import { render, replace } from '../framework/render';
+import { render } from '../framework/render';
 import { generateFilters } from '../mocks/filter';
 import { generateSorting } from '../mocks/sorting';
+import { updateElement } from '../utils/common';
+import PointPresenter from './point-presenter';
 
 export default class BoardPresenter {
   #listView = new ListView();
@@ -16,6 +16,10 @@ export default class BoardPresenter {
   #tripInfoContainer = null;
   #filtersContainer = null;
   #pointsModel = null;
+  #boardPoints = [];
+  #filters = [];
+  #sortingItems = [];
+  #pointPresenters = new Map();
 
   constructor({boardContainer, tripInfoContainer, filtersContainer, pointsModel}) {
     this.#boardContainer = boardContainer;
@@ -25,71 +29,81 @@ export default class BoardPresenter {
   }
 
   init() {
-    const boardPoints = [...this.#pointsModel.points];
-    const boardDestinations = [...this.#pointsModel.destinations];
-    const filters = generateFilters(boardPoints);
-    const sortingItems = generateSorting(boardPoints);
+    this.#boardPoints = [...this.#pointsModel.points];
+    this.#filters = generateFilters(this.#boardPoints);
+    this.#sortingItems = generateSorting(this.#boardPoints);
 
-    this.#render(boardPoints, boardDestinations, filters, sortingItems);
+    this.#renderBoard();
   }
 
-  #render(boardPoints, boardDestinations, filters, sortingItems) {
+  #renderCost() {
     render(new CostView(), this.#tripInfoContainer);
-    render(new FiltersView({filters}), this.#filtersContainer);
-    render(new SortView({sortingItems}), this.#boardContainer);
+  }
+
+  #renderFilters() {
+    render(new FiltersView({ filters: this.#filters }), this.#filtersContainer);
+  }
+
+  #renderSort() {
+    render(new SortView({ sortingItems: this.#sortingItems }), this.#boardContainer);
+  }
+
+  #renderEmptyList() {
+    render(new ListEmptyView(), this.#boardContainer);
+  }
+
+  #renderPoint(point) {
+    const pointPresenter = new PointPresenter({
+      listContainer: this.#listView.element,
+      pointsModel: this.#pointsModel,
+      onDataChange: this.#dataChangeHandler,
+      onModeChange: this.#handleModeChange
+    });
+
+    pointPresenter.init(point);
+
+    this.#pointPresenters.set(point.id, pointPresenter);
+  }
+
+  #renderPoints() {
+    this.#boardPoints.forEach((point) => {
+      this.#renderPoint(point);
+    });
+  }
+
+  #clearPointsList() {
+    this.#pointPresenters.forEach((presenter) => {
+      presenter.destroy();
+    });
+
+    this.#pointPresenters.clear();
+  }
+
+  #renderPointsList() {
     render(this.#listView, this.#boardContainer);
 
-    if (!boardPoints.length) {
-      render(new ListEmptyView(), this.#boardContainer);
-      return;
+    if (!this.#boardPoints.length) {
+      this.#renderEmptyList();
     }
 
-    for (let i = 1; i < boardPoints.length; i++) {
-      this.#renderPoint(boardPoints[i], boardDestinations);
-    }
+    this.#renderPoints();
   }
 
-  #renderPoint(point, boardDestinations) {
-    function documentKeydownHandler(evt) {
-      if (evt.key === 'Escape') {
-        evt.preventDefault();
-        replaceFormToPoint();
-        document.removeEventListener('keydown', documentKeydownHandler);
-      }
-    }
-
-    const pointComponent = new PointView({
-      point: point,
-      destination: this.#pointsModel.getDestinationById(point.destination),
-      offers: this.#pointsModel.getOffersByType(point.type),
-      onRollupClick: () => {
-        replacePointToForm();
-        document.addEventListener('keydown', documentKeydownHandler);
-      }
-    });
-
-    const pointEditComponent = new PointEditView({
-      point: point,
-      destinations: boardDestinations,
-      offers: this.#pointsModel.getOffersByType(point.type),
-      onRollupClick: () => {
-        replaceFormToPoint();
-        document.removeEventListener('keydown', documentKeydownHandler);
-      },
-      onFormSubmit: () => {
-        replaceFormToPoint();
-        document.removeEventListener('keydown', documentKeydownHandler);
-      }
-    });
-
-    function replacePointToForm() {
-      replace(pointEditComponent, pointComponent);
-    }
-
-    function replaceFormToPoint() {
-      replace(pointComponent, pointEditComponent);
-    }
-
-    render(pointComponent, this.#listView.element);
+  #renderBoard() {
+    this.#renderCost();
+    this.#renderFilters();
+    this.#renderSort();
+    this.#renderPointsList();
   }
+
+  #dataChangeHandler = (newPoint) => {
+    this.#boardPoints = updateElement(this.#boardPoints, newPoint);
+    this.#pointPresenters.get(newPoint.id).init(newPoint);
+  };
+
+  #handleModeChange = () => {
+    this.#pointPresenters.forEach((presenter) => {
+      presenter.clearMode();
+    });
+  };
 }

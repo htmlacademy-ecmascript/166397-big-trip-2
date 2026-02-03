@@ -10,18 +10,6 @@ export default class PointsModel {
   #destinations = [];
   #offers = [];
 
-  async init() {
-    try {
-      this.#points = await Array.from({length: POINT_COUNT}, getRandomPoint);
-      this.#destinations = await getMockDestinations();
-      this.#offers = await getMockOffers();
-    } catch {
-      this.#points = [];
-      this.#destinations = [];
-      this.#offers = [];
-    }
-  }
-
   get points() {
     return this.#points;
   }
@@ -32,6 +20,18 @@ export default class PointsModel {
 
   get offers() {
     return this.#offers;
+  }
+
+  async init() {
+    try {
+      this.#points = await Array.from({length: POINT_COUNT}, getRandomPoint);
+      this.#destinations = await getMockDestinations();
+      this.#offers = await getMockOffers();
+    } catch {
+      this.#points = [];
+      this.#destinations = [];
+      this.#offers = [];
+    }
   }
 
   getDestinationById(id) {

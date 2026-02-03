@@ -1,12 +1,11 @@
 import dayjs from 'dayjs';
-import duration from 'dayjs/plugin/duration';
 import isSameBetween from 'dayjs/plugin/isBetween';
+import { getDuration } from './common';
 
 const DATE_FORMATE = 'MMM D';
 const TIME_FORMATE = 'HH:mm';
 const DATE_AND_TIME_FORMATE = 'DD/MM/YY HH:mm';
 
-dayjs.extend(duration);
 dayjs.extend(isSameBetween);
 
 function humanizePointDate(pointDate) {
@@ -17,11 +16,8 @@ function humanizePointTime(pointTime) {
   return pointTime ? dayjs(pointTime).format(TIME_FORMATE) : '';
 }
 
-function getDuration(dateFrom, dateTo) {
-  const formattedDateTo = dayjs(dateTo);
-  const formattedDateFrom = dayjs(dateFrom);
-
-  return dayjs.duration(formattedDateTo.diff(formattedDateFrom));
+function padNumber(value) {
+  return value.toString().padStart(2, '0');
 }
 
 function humanizeDuration(dateFrom, dateTo) {
@@ -30,7 +26,11 @@ function humanizeDuration(dateFrom, dateTo) {
   const hours = formattedDuration.hours();
   const minutes = formattedDuration.minutes();
 
-  return `${days ? `${days}D` : ''} ${hours ? `${hours}H` : ''} ${minutes}M`;
+  const formattedDays = padNumber(days);
+  const formattedHourse = padNumber(hours);
+  const formattedMinutes = padNumber(minutes);
+
+  return `${days ? `${formattedDays}D` : ''} ${days || hours ? `${formattedHourse}H` : ''} ${formattedMinutes}M`;
 }
 
 function humanizePointDateAndTime(pointDate) {
