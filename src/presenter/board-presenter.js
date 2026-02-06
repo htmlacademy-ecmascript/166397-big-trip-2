@@ -20,7 +20,7 @@ export default class BoardPresenter {
   #points = [];
   #filters = [];
   #sortings = [];
-  #isSortingExist = false;
+  #isSortingsExist = false;
   #pointPresenters = new Map();
   #currentSortType = SortingType.DAY;
 
@@ -34,8 +34,7 @@ export default class BoardPresenter {
   init() {
     this.#points = [...this.#pointsModel.points];
     this.#filters = generateFilters(this.#points);
-    this.#sortings = generateSorting(this.#points);
-    this.#isSortingExist = !this.#sortings || !this.#sortings.length;
+    this.#isSortingsExist = Boolean(this.#sortings.length);
 
     this.#renderBoard();
   }
@@ -49,7 +48,7 @@ export default class BoardPresenter {
   }
 
   #renderSort() {
-    if (this.#isSortingExist) {
+    if (!this.#isSortingsExist) {
       return;
     }
 
@@ -103,7 +102,7 @@ export default class BoardPresenter {
   }
 
   #sortPoints() {
-    if (this.#isSortingExist) {
+    if (!this.#isSortingsExist) {
       return;
     }
 
