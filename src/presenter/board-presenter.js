@@ -34,6 +34,7 @@ export default class BoardPresenter {
   init() {
     this.#points = [...this.#pointsModel.points];
     this.#filters = generateFilters(this.#points);
+    this.#sortings = generateSorting(this.#points);
     this.#isSortingsExist = Boolean(this.#sortings.length);
 
     this.#renderBoard();
