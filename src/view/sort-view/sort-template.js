@@ -14,15 +14,15 @@ function createSortItemTemplate({type, points}) {
   `;
 }
 
-function createSortTemplate(sortingItems) {
-  const sortingItemsTemplate = sortingItems.map((sortingItem) => createSortItemTemplate(sortingItem)).join('');
+function createSortTemplate(sortings) {
+  const sortingItemsTemplate = sortings.map((sortingItem) => createSortItemTemplate(sortingItem)).join('');
 
-  return sortingItems?.length ? (`
+  return (`
     <form class="trip-events__trip-sort  trip-sort" action="#" method="get">
       ${sortingItemsTemplate}
 
     </form>
-  `) : '';
+  `);
 }
 
 export { createSortTemplate };

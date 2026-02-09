@@ -5,7 +5,7 @@ import { PointMode } from '../const';
 
 export default class PointPresenter {
   #point = null;
-  #boardDestinations = [];
+  #destinations = [];
   #listContainer = null;
   #destination = null;
   #offers = [];
@@ -25,26 +25,28 @@ export default class PointPresenter {
 
   init(point) {
     this.#point = point;
-    this.#destination = this.#pointsModel.getDestinationById(this.#point.destination);
-    this.#boardDestinations = [...this.#pointsModel.destinations];
-    this.#offers = this.#pointsModel.getOffersByType(point.type);
+    this.#destination = this.#getDestination(this.#point.destination);
+    this.#destinations = [...this.#pointsModel.destinations];
+    this.#offers = this.#getOffers(this.#point.type);
 
     const prevPointComponent = this.#pointComponent;
     const prevPointEditComponent = this.#pointEditComponent;
 
     this.#pointComponent = new PointView({
       point: this.#point,
+      pointsModel: this.#pointsModel,
       destination: this.#destination,
       offers: this.#offers,
-      onRollupClick: this.#handleRollupPointClick,
+      onRollupClick: this.#handleRollupClick,
       onFavoriteClick: this.#handleFavoriteClick
     });
 
     this.#pointEditComponent = new PointEditView({
       point: this.#point,
-      destinations: this.#boardDestinations,
-      offers: this.#offers,
-      onRollupClick: this.#handleRollupPointEditClick,
+      destinations: this.#destinations,
+      getOffers: this.#getOffers,
+      getDestination: this.#getDestination,
+      onRollupClick: this.#handleRollupClick,
       onFormSubmit: this.#handleFormSubmit
     });
 
@@ -70,12 +72,17 @@ export default class PointPresenter {
     remove(this.#pointEditComponent);
   }
 
-  #changeStatePoint(mode) {
-    if (mode === PointMode.EDITING) {
+  #getDestination = (id) => this.#pointsModel.getDestinationById(id);
+
+  #getOffers = (type) => this.#pointsModel.getOffersByType(type);
+
+  #togglePointMode() {
+    if (this.#mode !== PointMode.EDITING) {
       replace(this.#pointEditComponent, this.#pointComponent);
       document.addEventListener('keydown', this.#documentKeydownHandler);
 
       this.#mode = PointMode.EDITING;
+
     } else {
       replace(this.#pointComponent, this.#pointEditComponent);
       document.removeEventListener('keydown', this.#documentKeydownHandler);
@@ -84,31 +91,32 @@ export default class PointPresenter {
     }
   }
 
-  clearMode() {
+  resetMode() {
     if (this.#mode !== PointMode.DEFAULT) {
-      this.#changeStatePoint(PointMode.DEFAULT);
+      this.#pointEditComponent.reset(this.#point, this.#offers, this.#destination);
+      this.#togglePointMode();
     }
   }
 
   #documentKeydownHandler = (evt) => {
     if (evt.key === 'Escape') {
       evt.preventDefault();
-      this.#changeStatePoint(PointMode.DEFAULT);
+      this.#pointEditComponent.reset(this.#point, this.#offers, this.#destination);
+      this.#togglePointMode();
     }
   };
 
-  #handleRollupPointClick = () => {
-    this.#handleModeChange();
-    this.#changeStatePoint(PointMode.EDITING);
+  #handleRollupClick = () => {
+    if (this.#mode === PointMode.DEFAULT) {
+      this.#handleModeChange();
+    }
 
+    this.#togglePointMode();
   };
 
-  #handleRollupPointEditClick = () => {
-    this.#changeStatePoint(PointMode.DEFAULT);
-  };
-
-  #handleFormSubmit = () => {
-    this.#changeStatePoint(PointMode.DEFAULT);
+  #handleFormSubmit = (task) => {
+    this.#handleDataChange(task);
+    this.#togglePointMode();
   };
 
   #handleFavoriteClick = () => {

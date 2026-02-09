@@ -39,7 +39,7 @@ function createOffersTemplate(offers, currentOfferTypeElements) {
 }
 
 function createDestinationsTemplate(destinations) {
-  return destinations.map((destination) => `<option value="${destination.name}"></option>`).join('');
+  return destinations.map((destination) => `<option value="${destination.name}" data-destination-id="${destination.id}"></option>`).join('');
 }
 
 function createPicturesTemplate(pictures) {
@@ -51,8 +51,18 @@ function createPicturesTemplate(pictures) {
     </div>`;
 }
 
+function createDestinationTemplate(description, picturesTemplate) {
+  return `
+      <section class="event__section  event__section--destination">
+        <h3 class="event__section-title  event__section-title--destination">Destination</h3>
+        <p class="event__destination-description">${description}</p>
+        ${picturesTemplate}
+      </section>
+  `;
+}
+
 function createPointEditTemplate(point, destinations, currentOfferTypeElements) {
-  const { id, base_price: basePrice, date_from: dateFrom, date_to: dateTo, destination, offers, type } = point;
+  const { id, base_price: basePrice, date_from: dateFrom, date_to: dateTo, destination, offers, type, isOffers, isDestination, currentDestionationInput } = point;
 
   const currentDestination = getElementByKey('id', destination, destinations);
 
@@ -61,12 +71,13 @@ function createPointEditTemplate(point, destinations, currentOfferTypeElements) 
   const price = basePrice || '';
   const humanizedDateFrom = humanizePointDateAndTime(dateFrom);
   const humanizedDateTo = humanizePointDateAndTime(dateTo);
-  const {name, description, pictures} = currentDestination || {};
+  const {description, pictures} = currentDestination || {};
 
-  const offersTemplate = offers?.length ? createOffersTemplate(offers, currentOfferTypeElements) : '';
+  const offersTemplate = isOffers ? createOffersTemplate(offers, currentOfferTypeElements) : '';
   const picturesTemplate = pictures?.length ? createPicturesTemplate(pictures) : '';
   const destinationsTemplate = destinations?.length ? createDestinationsTemplate(destinations) : '';
   const eventTypesTemplate = DESTINATION_TYPES?.length ? createEventTypesTemplate(currentType, pointId) : '';
+  const destinationTemplate = isDestination ? createDestinationTemplate(description, picturesTemplate) : '';
 
   return (`
     <li class="trip-events__item">
@@ -92,7 +103,7 @@ function createPointEditTemplate(point, destinations, currentOfferTypeElements) 
             <label class="event__label  event__type-output" for="event-destination-${pointId}">
               ${currentType}
             </label>
-            <input class="event__input  event__input--destination" id="event-destination-${pointId}" type="text" name="event-destination" value="${name}" list="destination-list-${pointId}">
+            <input class="event__input  event__input--destination" id="event-destination-${pointId}" type="text" name="event-destination" value="${currentDestionationInput || ''}" list="destination-list-${pointId}">
             <datalist id="destination-list-${pointId}">
               ${destinationsTemplate}
             </datalist>
@@ -123,11 +134,7 @@ function createPointEditTemplate(point, destinations, currentOfferTypeElements) 
         <section class="event__details">
           ${offersTemplate}
 
-          <section class="event__section  event__section--destination">
-            <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-            <p class="event__destination-description">${description}</p>
-            ${picturesTemplate}
-          </section>
+          ${destinationTemplate}
         </section>
       </form>
     </li>

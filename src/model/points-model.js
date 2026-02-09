@@ -39,6 +39,6 @@ export default class PointsModel {
   }
 
   getOffersByType(type) {
-    return getElementByKey('type', type, this.#offers).offers;
+    return getElementByKey('type', type, this.#offers)?.offers;
   }
 }

@@ -17,9 +17,10 @@ export default class BoardPresenter {
   #tripInfoContainer = null;
   #filtersContainer = null;
   #pointsModel = null;
-  #boardPoints = [];
+  #points = [];
   #filters = [];
-  #sortingItems = [];
+  #sortings = [];
+  #isSortingsExist = false;
   #pointPresenters = new Map();
   #currentSortType = SortingType.DAY;
 
@@ -31,9 +32,10 @@ export default class BoardPresenter {
   }
 
   init() {
-    this.#boardPoints = [...this.#pointsModel.points];
-    this.#filters = generateFilters(this.#boardPoints);
-    this.#sortingItems = generateSorting(this.#boardPoints);
+    this.#points = [...this.#pointsModel.points];
+    this.#filters = generateFilters(this.#points);
+    this.#sortings = generateSorting(this.#points);
+    this.#isSortingsExist = Boolean(this.#sortings.length);
 
     this.#renderBoard();
   }
@@ -47,8 +49,12 @@ export default class BoardPresenter {
   }
 
   #renderSort() {
+    if (!this.#isSortingsExist) {
+      return;
+    }
+
     render(new SortView({
-      sortingItems: this.#sortingItems,
+      sortings: this.#sortings,
       onSortChange: this.#sortChangeHandler
     }), this.#boardContainer);
   }
@@ -61,7 +67,7 @@ export default class BoardPresenter {
     const pointPresenter = new PointPresenter({
       listContainer: this.#listView.element,
       pointsModel: this.#pointsModel,
-      onDataChange: this.#dataChangeHandler,
+      onDataChange: this.#pointDataChangeHandler,
       onModeChange: this.#handleModeChange
     });
 
@@ -73,7 +79,7 @@ export default class BoardPresenter {
   #renderPoints() {
     this.#sortPoints();
 
-    this.#boardPoints.forEach((point) => {
+    this.#points.forEach((point) => {
       this.#renderPoint(point);
     });
   }
@@ -87,7 +93,7 @@ export default class BoardPresenter {
   }
 
   #renderPointsList() {
-    if (!this.#boardPoints.length) {
+    if (!this.#points.length) {
       this.#renderEmptyList();
       return;
     }
@@ -97,7 +103,11 @@ export default class BoardPresenter {
   }
 
   #sortPoints() {
-    this.#boardPoints = getElementByKey('type', this.#currentSortType, this.#sortingItems).points;
+    if (!this.#isSortingsExist) {
+      return;
+    }
+
+    this.#points = getElementByKey('type', this.#currentSortType, this.#sortings).points;
   }
 
   #renderBoard() {
@@ -107,14 +117,14 @@ export default class BoardPresenter {
     this.#renderPointsList();
   }
 
-  #dataChangeHandler = (newPoint) => {
-    this.#boardPoints = updateElement(this.#boardPoints, newPoint);
+  #pointDataChangeHandler = (newPoint) => {
+    this.#points = updateElement(this.#points, newPoint);
     this.#pointPresenters.get(newPoint.id).init(newPoint);
   };
 
   #handleModeChange = () => {
     this.#pointPresenters.forEach((presenter) => {
-      presenter.clearMode();
+      presenter.resetMode();
     });
   };
 
