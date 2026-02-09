@@ -25,15 +25,16 @@ export default class PointPresenter {
 
   init(point) {
     this.#point = point;
-    this.#destination = this.#pointsModel.getDestinationById(this.#point.destination);
+    this.#destination = this.#getDestination(this.#point.destination);
     this.#destinations = [...this.#pointsModel.destinations];
-    this.#offers = this.#pointsModel.getOffersByType(point.type);
+    this.#offers = this.#getOffers(this.#point.type);
 
     const prevPointComponent = this.#pointComponent;
     const prevPointEditComponent = this.#pointEditComponent;
 
     this.#pointComponent = new PointView({
       point: this.#point,
+      pointsModel: this.#pointsModel,
       destination: this.#destination,
       offers: this.#offers,
       onRollupClick: this.#handleRollupClick,
@@ -43,7 +44,8 @@ export default class PointPresenter {
     this.#pointEditComponent = new PointEditView({
       point: this.#point,
       destinations: this.#destinations,
-      offers: this.#offers,
+      getOffers: this.#getOffers,
+      getDestination: this.#getDestination,
       onRollupClick: this.#handleRollupClick,
       onFormSubmit: this.#handleFormSubmit
     });
@@ -70,6 +72,10 @@ export default class PointPresenter {
     remove(this.#pointEditComponent);
   }
 
+  #getDestination = (id) => this.#pointsModel.getDestinationById(id);
+
+  #getOffers = (type) => this.#pointsModel.getOffersByType(type);
+
   #togglePointMode() {
     if (this.#mode !== PointMode.EDITING) {
       replace(this.#pointEditComponent, this.#pointComponent);
@@ -87,6 +93,7 @@ export default class PointPresenter {
 
   resetMode() {
     if (this.#mode !== PointMode.DEFAULT) {
+      this.#pointEditComponent.reset(this.#point, this.#offers, this.#destination);
       this.#togglePointMode();
     }
   }
@@ -94,6 +101,7 @@ export default class PointPresenter {
   #documentKeydownHandler = (evt) => {
     if (evt.key === 'Escape') {
       evt.preventDefault();
+      this.#pointEditComponent.reset(this.#point, this.#offers, this.#destination);
       this.#togglePointMode();
     }
   };
@@ -106,7 +114,8 @@ export default class PointPresenter {
     this.#togglePointMode();
   };
 
-  #handleFormSubmit = () => {
+  #handleFormSubmit = (task) => {
+    this.#handleDataChange(task);
     this.#togglePointMode();
   };
 

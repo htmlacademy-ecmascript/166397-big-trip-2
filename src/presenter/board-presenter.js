@@ -67,7 +67,7 @@ export default class BoardPresenter {
     const pointPresenter = new PointPresenter({
       listContainer: this.#listView.element,
       pointsModel: this.#pointsModel,
-      onDataChange: this.#PointDataChangeHandler,
+      onDataChange: this.#pointDataChangeHandler,
       onModeChange: this.#handleModeChange
     });
 
@@ -117,7 +117,7 @@ export default class BoardPresenter {
     this.#renderPointsList();
   }
 
-  #PointDataChangeHandler = (newPoint) => {
+  #pointDataChangeHandler = (newPoint) => {
     this.#points = updateElement(this.#points, newPoint);
     this.#pointPresenters.get(newPoint.id).init(newPoint);
   };
