@@ -108,7 +108,6 @@ export default class PointEditView extends AbstractStatulView {
 
   #dateChangeHandler = ([userDate], dateType) => {
     this.updateElement({
-      // eslint-disable-next-line camelcase
       [dateType]: toISOString(userDate),
     });
   };
