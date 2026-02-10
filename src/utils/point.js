@@ -20,6 +20,10 @@ function padNumber(value) {
   return value.toString().padStart(2, '0');
 }
 
+function toISOString(date) {
+  return dayjs(date).toISOString();
+}
+
 function humanizeDuration(dateFrom, dateTo) {
   const formattedDuration = getDuration(dateFrom, dateTo);
   const days = formattedDuration.days() ? formattedDuration.days() : Math.floor(formattedDuration.asDays());
@@ -49,4 +53,4 @@ function isPastPoint(dateTo) {
   return dateTo && dayjs(dateTo).isBefore(dayjs(), 'D');
 }
 
-export { humanizePointDate, humanizePointTime, getDuration, humanizeDuration, humanizePointDateAndTime, isFuturePoint, isPresentPoint, isPastPoint };
+export { humanizePointDate, humanizePointTime, getDuration, humanizeDuration, humanizePointDateAndTime, isFuturePoint, isPresentPoint, isPastPoint, toISOString };
