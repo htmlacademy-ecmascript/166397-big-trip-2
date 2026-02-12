@@ -110,6 +110,7 @@ export default class PointEditView extends AbstractStatulView {
     this.updateElement({
       [dateType]: toISOString(userDate),
     });
+
   };
 
   #setDatepicker() {
@@ -132,6 +133,8 @@ export default class PointEditView extends AbstractStatulView {
         },
       );
     });
+
+    this.#datepickers[0].set('maxDate', this.#datepickers[1].selectedDates[0]);
   }
 
   static parsePointToState(point, offers, destination) {
