@@ -7,7 +7,7 @@ import ListEmptyView from '../view/list-empty-view';
 import { render } from '../framework/render';
 import { generateFilters } from '../mocks/filter';
 import { generateSorting } from '../mocks/sorting';
-import { updateElement, getElementByKey } from '../utils/common';
+import { getElementByKey } from '../utils/common';
 import { SortingType } from '../const';
 import PointPresenter from './point-presenter';
 
@@ -118,7 +118,8 @@ export default class BoardPresenter {
   }
 
   #pointDataChangeHandler = (newPoint) => {
-    this.#points = updateElement(this.#points, newPoint);
+    this.#pointsModel.updateTask(newPoint);
+    this.#points = this.#pointsModel.points;
     this.#pointPresenters.get(newPoint.id).init(newPoint);
   };
 
