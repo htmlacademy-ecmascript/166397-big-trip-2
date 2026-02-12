@@ -20,8 +20,7 @@ function createOffersTemplate(offers, currentOfferTypeElements) {
     <section class="event__section  event__section--offers">
       <h3 class="event__section-title  event__section-title--offers">Offers</h3>
       <div class="event__available-offers">
-      ${currentOfferTypeElements.map((offer) => {
-    const {id, title, price} = offer;
+      ${currentOfferTypeElements.map(({id, title, price}) => {
     const checked = offers.includes(id) ? 'checked' : '';
 
     return `

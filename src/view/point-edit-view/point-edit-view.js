@@ -26,6 +26,7 @@ export default class PointEditView extends AbstractStatulView {
   #handleFormSubmit = null;
   #getOffers = null;
   #getDestination = null;
+  #form = null;
   #datepickers = [];
 
   constructor({point = BLANK_POINT, destinations, getOffers, getDestination, onRollupClick, onFormSubmit}) {
@@ -36,6 +37,7 @@ export default class PointEditView extends AbstractStatulView {
     this.#destinations = destinations;
     this.#handleRollupClick = onRollupClick;
     this.#handleFormSubmit = onFormSubmit;
+    this.#form = this.element.querySelector('form');
 
     this._restoreHandlers();
   }
@@ -61,11 +63,13 @@ export default class PointEditView extends AbstractStatulView {
 
   _restoreHandlers() {
     this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#rollupClickHandler);
-    this.element.addEventListener('submit', this.#formSubmitHandler);
+    this.element.querySelector('form').addEventListener('submit', this.#formSubmitHandler);
     this.element.addEventListener('change', this.#typeChangeHandler);
-    this.element.addEventListener('change', this.#destinationChangeHandler);
+    this.element.querySelector('.event__input--destination').addEventListener('change', this.#destinationChangeHandler);
+    this.element.querySelector('.event__input--price').addEventListener('change', this.#priceChangeHandler);
+    this.element.addEventListener('change', this.#offersChangeHandler);
 
-    this.#setDatepicker();
+    this.#setDatepickers();
   }
 
   #rollupClickHandler = (evt) => {
@@ -91,17 +95,37 @@ export default class PointEditView extends AbstractStatulView {
   };
 
   #destinationChangeHandler = (evt) => {
-    if (evt.target.matches('.event__input--destination')) {
+    evt.preventDefault();
+
+    const currentOptionElement = evt.target.list.querySelector(`[value="${evt.target.value}"]`);
+
+    const currentDestination = currentOptionElement ? currentOptionElement.dataset.destinationId : null;
+
+    this.updateElement({
+      destination: currentDestination,
+      isDestination: Boolean(this.#getDestination(currentDestination)),
+      currentDestionationInput: evt.target.value
+    });
+  };
+
+  #priceChangeHandler = (evt) => {
+    evt.preventDefault();
+    this._setState({
+      // eslint-disable-next-line camelcase
+      base_price: evt.target.value
+    });
+  };
+
+  #offersChangeHandler = (evt) => {
+    if (evt.target.matches('.event__offer-checkbox')) {
       evt.preventDefault();
+      const offersCheckboxes = Array.from(this.#form['event-offer-luggage']);
 
-      const currentOptionElement = evt.target.list.querySelector(`[value="${evt.target.value}"]`);
+      const checkedOffers = offersCheckboxes.filter((item) => item.checked).map((item) => item.id.replace('event-offer-luggage-', ''));
 
-      const currentDestination = currentOptionElement ? currentOptionElement.dataset.destinationId : null;
-
-      this.updateElement({
-        destination: currentDestination,
-        isDestination: Boolean(this.#getDestination(currentDestination)),
-        currentDestionationInput: evt.target.value
+      this._setState({
+        offers: checkedOffers,
+        isOffers: Boolean(checkedOffers?.length)
       });
     }
   };
@@ -113,11 +137,12 @@ export default class PointEditView extends AbstractStatulView {
 
   };
 
-  #setDatepicker() {
+  #setDatepickers() {
     const dateElements = this.element.querySelectorAll('.event__input--time');
 
     dateElements.forEach((item, index) => {
-      const dateType = item.name === 'event-start-time' ? 'date_from' : 'date_to';
+      const isStartTime = item.name === 'event-start-time';
+      const dateType = isStartTime ? 'date_from' : 'date_to';
 
       this.#datepickers[index] = flatpickr(
         item,
@@ -127,9 +152,9 @@ export default class PointEditView extends AbstractStatulView {
           // eslint-disable-next-line camelcase
           time_24hr: true,
           dateFormat: 'd/m/y H:i',
-          minDate: item.name === 'event-start-time' ? null : this.#datepickers[0].selectedDates[0],
+          minDate: isStartTime ? null : this.#datepickers[0].selectedDates[0],
           defaultDate: this._state[dateType],
-          onChange: (date) => this.#dateChangeHandler(date, dateType),
+          onClose: (date) => this.#dateChangeHandler(date, dateType),
         },
       );
     });

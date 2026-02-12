@@ -119,7 +119,7 @@ export default class BoardPresenter {
 
   #pointDataChangeHandler = (newPoint) => {
     this.#pointsModel.updateTask(newPoint);
-    this.#points = this.#pointsModel.points;
+    this.#points = [...this.#pointsModel.points];
     this.#pointPresenters.get(newPoint.id).init(newPoint);
   };
 
