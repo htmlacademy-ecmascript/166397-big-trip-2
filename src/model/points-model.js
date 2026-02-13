@@ -1,7 +1,7 @@
 import { getRandomPoint } from '../mocks/point';
 import { getMockOffers } from '../mocks/offer';
 import { getMockDestinations } from '../mocks/destination';
-import { getElementByKey } from '../utils/common';
+import { updateElement, getElementByKey } from '../utils/common';
 
 const POINT_COUNT = 4;
 
@@ -40,5 +40,9 @@ export default class PointsModel {
 
   getOffersByType(type) {
     return getElementByKey('type', type, this.#offers)?.offers;
+  }
+
+  updateTask(newPoint) {
+    this.#points = updateElement(this.#points, newPoint);
   }
 }

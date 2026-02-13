@@ -25,7 +25,7 @@ export default class PointPresenter {
 
   init(point) {
     this.#point = point;
-    this.#destination = this.#getDestination(this.#point.destination);
+    this.#destination = this.#pointsModel.getDestinationById(this.#point.destination);
     this.#destinations = [...this.#pointsModel.destinations];
     this.#offers = this.#getOffers(this.#point.type);
 
@@ -34,7 +34,6 @@ export default class PointPresenter {
 
     this.#pointComponent = new PointView({
       point: this.#point,
-      pointsModel: this.#pointsModel,
       destination: this.#destination,
       offers: this.#offers,
       onRollupClick: this.#handleRollupClick,
@@ -45,7 +44,6 @@ export default class PointPresenter {
       point: this.#point,
       destinations: this.#destinations,
       getOffers: this.#getOffers,
-      getDestination: this.#getDestination,
       onRollupClick: this.#handleRollupClick,
       onFormSubmit: this.#handleFormSubmit
     });
@@ -72,8 +70,6 @@ export default class PointPresenter {
     remove(this.#pointEditComponent);
   }
 
-  #getDestination = (id) => this.#pointsModel.getDestinationById(id);
-
   #getOffers = (type) => this.#pointsModel.getOffersByType(type);
 
   #togglePointMode() {
@@ -93,7 +89,7 @@ export default class PointPresenter {
 
   resetMode() {
     if (this.#mode !== PointMode.DEFAULT) {
-      this.#pointEditComponent.reset(this.#point, this.#offers, this.#destination);
+      this.#pointEditComponent.reset(this.#point);
       this.#togglePointMode();
     }
   }
@@ -101,7 +97,7 @@ export default class PointPresenter {
   #documentKeydownHandler = (evt) => {
     if (evt.key === 'Escape') {
       evt.preventDefault();
-      this.#pointEditComponent.reset(this.#point, this.#offers, this.#destination);
+      this.#pointEditComponent.reset(this.#point);
       this.#togglePointMode();
     }
   };
