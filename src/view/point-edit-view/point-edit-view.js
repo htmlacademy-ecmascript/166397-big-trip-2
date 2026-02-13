@@ -25,19 +25,17 @@ export default class PointEditView extends AbstractStatulView {
   #handleRollupClick = null;
   #handleFormSubmit = null;
   #getOffers = null;
-  #getDestination = null;
-  #form = null;
-  #datepickers = [];
 
-  constructor({point = BLANK_POINT, destinations, getOffers, getDestination, onRollupClick, onFormSubmit}) {
+  #datepickers = [];
+  #form = null;
+
+  constructor({point = BLANK_POINT, destinations, getOffers, onRollupClick, onFormSubmit}) {
     super();
     this.#getOffers = getOffers;
-    this.#getDestination = getDestination;
-    this._setState(PointEditView.parsePointToState(point, this.#getOffers(point.type), this.#getDestination(point.destination)));
+    this._setState(PointEditView.parsePointToState(point));
     this.#destinations = destinations;
     this.#handleRollupClick = onRollupClick;
     this.#handleFormSubmit = onFormSubmit;
-    this.#form = this.element.querySelector('form');
 
     this._restoreHandlers();
   }
@@ -57,17 +55,19 @@ export default class PointEditView extends AbstractStatulView {
     }
   }
 
-  reset(point, offers, destination) {
-    this.updateElement(PointEditView.parsePointToState(point, offers, destination));
+  reset(point) {
+    this.updateElement(PointEditView.parsePointToState(point));
   }
 
   _restoreHandlers() {
-    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#rollupClickHandler);
-    this.element.querySelector('form').addEventListener('submit', this.#formSubmitHandler);
-    this.element.addEventListener('change', this.#typeChangeHandler);
-    this.element.querySelector('.event__input--destination').addEventListener('change', this.#destinationChangeHandler);
-    this.element.querySelector('.event__input--price').addEventListener('change', this.#priceChangeHandler);
-    this.element.addEventListener('change', this.#offersChangeHandler);
+    this.#form = this.element.querySelector('form');
+
+    this.#form.querySelector('.event__rollup-btn').addEventListener('click', this.#rollupClickHandler);
+    this.#form.addEventListener('submit', this.#formSubmitHandler);
+    this.#form.querySelector('.event__type-list').addEventListener('change', this.#typeChangeHandler);
+    this.#form.querySelector('.event__input--destination').addEventListener('change', this.#destinationChangeHandler);
+    this.#form.querySelector('.event__input--price').addEventListener('change', this.#priceChangeHandler);
+    this.#form.addEventListener('change', this.#offersChangeHandler);
 
     this.#setDatepickers();
   }
@@ -89,7 +89,6 @@ export default class PointEditView extends AbstractStatulView {
       this.updateElement({
         type: evt.target.value,
         offers: [],
-        isOffers: Boolean(this.#getOffers(evt.target.value)),
       });
     }
   };
@@ -103,7 +102,6 @@ export default class PointEditView extends AbstractStatulView {
 
     this.updateElement({
       destination: currentDestination,
-      isDestination: Boolean(this.#getDestination(currentDestination)),
       currentDestionationInput: evt.target.value
     });
   };
@@ -124,8 +122,7 @@ export default class PointEditView extends AbstractStatulView {
       const checkedOffers = offersCheckboxes.filter((item) => item.checked).map((item) => item.id.replace('event-offer-luggage-', ''));
 
       this._setState({
-        offers: checkedOffers,
-        isOffers: Boolean(checkedOffers?.length)
+        offers: checkedOffers
       });
     }
   };
@@ -162,32 +159,16 @@ export default class PointEditView extends AbstractStatulView {
     this.#datepickers[0].set('maxDate', this.#datepickers[1].selectedDates[0]);
   }
 
-  static parsePointToState(point, offers, destination) {
+  static parsePointToState(point) {
     return {
       ...point,
-      isOffers: Boolean(offers?.length),
-      isDestination: Boolean(destination),
-      currentDestionationInput: destination?.name ? destination.name : null
+      currentDestionationInput: null
     };
   }
 
   static parseStateToPoint(state) {
     const point = {...state};
 
-    if (!point.isOffers) {
-      point.offers = [];
-    }
-
-    if (!point.isDestination) {
-      point.destination = null;
-    }
-
-    if (!point.currentDestionationInput) {
-      point.destination = null;
-    }
-
-    delete point.isOffers;
-    delete point.isDestination;
     delete point.currentDestionationInput;
 
     return point;

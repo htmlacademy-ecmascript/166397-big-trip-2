@@ -26,23 +26,7 @@ const mockOffers = [
   },
   {
     type: 'train',
-    offers: [
-      {
-        id: '0',
-        title: 'Aliquam id orci ut lectus varius viverra',
-        price: 120
-      },
-      {
-        id: '1',
-        title: 'Nunc fermentum tortor ac porta dapibus',
-        price: 500
-      },
-      {
-        id: '2',
-        title: 'In rutrum ac purus sit amet tempus',
-        price: 300
-      },
-    ]
+    offers: []
   },
   {
     type: 'restaurant',

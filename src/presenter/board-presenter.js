@@ -98,6 +98,7 @@ export default class BoardPresenter {
       return;
     }
 
+    this.#clearPointsList();
     render(this.#listView, this.#boardContainer);
     this.#renderPoints();
   }
@@ -120,7 +121,9 @@ export default class BoardPresenter {
   #pointDataChangeHandler = (newPoint) => {
     this.#pointsModel.updateTask(newPoint);
     this.#points = [...this.#pointsModel.points];
+    this.#sortings = generateSorting(this.#points);
     this.#pointPresenters.get(newPoint.id).init(newPoint);
+    this.#renderPointsList();
   };
 
   #handleModeChange = () => {
@@ -136,7 +139,6 @@ export default class BoardPresenter {
 
     this.#currentSortType = sortType;
 
-    this.#clearPointsList();
     this.#renderPointsList();
   };
 }
