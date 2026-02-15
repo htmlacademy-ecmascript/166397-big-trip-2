@@ -111,12 +111,12 @@ export default class PointPresenter {
   };
 
   #handleFormSubmit = (task) => {
-    this.#handleDataChange(UserAction.UPDATE_TASK, UpdateType.MINOR, task);
+    this.#handleDataChange(UserAction.UPDATE_POINT, UpdateType.MINOR, task);
     this.#togglePointMode();
   };
 
   #handleFavoriteClick = () => {
     // eslint-disable-next-line camelcase
-    this.#handleDataChange(UserAction.UPDATE_TASK, UpdateType.MINOR, {...this.#point, is_favorite: !this.#point.is_favorite});
+    this.#handleDataChange(UserAction.UPDATE_POINT, UpdateType.MINOR, {...this.#point, is_favorite: !this.#point.is_favorite});
   };
 }

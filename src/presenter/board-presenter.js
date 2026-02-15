@@ -8,7 +8,7 @@ import { render } from '../framework/render';
 import { generateFilters } from '../mocks/filter';
 import { generateSorting } from '../mocks/sorting';
 import { getElementByKey } from '../utils/common';
-import { SortingType } from '../const';
+import { SortingType, UpdateType, UserAction } from '../const';
 import PointPresenter from './point-presenter';
 
 export default class BoardPresenter {
@@ -133,13 +133,33 @@ export default class BoardPresenter {
   //   this.#renderPointsList();
   // };
 
-  #handleViewAction = (actionType, updateType, data) => {
-    console.log(actionType, updateType, data);
+  #handleViewAction = (actionType, updateType, update) => {
+    switch (actionType) {
+      case UserAction.UPDATE_POINT:
+        this.#pointsModel.updatePoint(updateType, update);
+        break;
+      case UserAction.ADD_POINT:
+        this.#pointsModel.addPoint(updateType, update);
+        break;
+      case UserAction.DELETE_POINT:
+        this.#pointsModel.deletePoint(updateType, update);
+        break;
+    }
   };
 
 
   #handleModelEvent = (updateType, data) => {
-    console.log(updateType, data);
+    switch (updateType) {
+      case UpdateType.PATCH:
+        this.#pointPresenters.get(data.id).init(data);
+        break;
+      case UserAction.ADD_POINT:
+
+        break;
+      case UserAction.DELETE_POINT:
+
+        break;
+    }
   };
 
   #handleModeChange = () => {
