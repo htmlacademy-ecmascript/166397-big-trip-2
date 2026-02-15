@@ -131,7 +131,6 @@ export default class PointEditView extends AbstractStatulView {
     this.updateElement({
       [dateType]: toISOString(userDate),
     });
-
   };
 
   #setDatepickers() {

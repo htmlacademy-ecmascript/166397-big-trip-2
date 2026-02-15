@@ -4,7 +4,7 @@ import ListView from '../view/list-view';
 import FiltersView from '../view/filters-view/filters-view';
 import CostView from '../view/cost-view';
 import ListEmptyView from '../view/list-empty-view';
-import { render } from '../framework/render';
+import { render, remove } from '../framework/render';
 import { generateFilters } from '../mocks/filter';
 import { generateSorting } from '../mocks/sorting';
 import { getElementByKey } from '../utils/common';
@@ -23,6 +23,9 @@ export default class BoardPresenter {
   #isSortingsExist = false;
   #pointPresenters = new Map();
   #currentSortType = SortingType.DAY;
+  #sortComponent = null;
+  #emptyListComponent = null;
+  #filtersComponent = null;
 
   constructor({boardContainer, tripInfoContainer, filtersContainer, pointsModel}) {
     this.#boardContainer = boardContainer;
@@ -52,7 +55,8 @@ export default class BoardPresenter {
   }
 
   #renderFilters() {
-    render(new FiltersView({ filters: this.#filters }), this.#filtersContainer);
+    this.#filtersComponent = new FiltersView({ filters: this.#filters });
+    render(this.#filtersComponent, this.#filtersContainer);
   }
 
   #renderSort() {
@@ -60,14 +64,17 @@ export default class BoardPresenter {
       return;
     }
 
-    render(new SortView({
+    this.#sortComponent = new SortView({
       sortings: this.#sortings,
       onSortChange: this.#sortChangeHandler
-    }), this.#boardContainer);
+    });
+
+    render(this.#sortComponent, this.#boardContainer);
   }
 
   #renderEmptyList() {
-    render(new ListEmptyView(), this.#boardContainer);
+    this.#emptyListComponent = new ListEmptyView();
+    render(this.#emptyListComponent, this.#boardContainer);
   }
 
   #renderPoint(point) {
@@ -105,7 +112,7 @@ export default class BoardPresenter {
       return;
     }
 
-    this.#clearPointsList();
+    // this.#clearPointsList();
     render(this.#listView, this.#boardContainer);
     this.#renderPoints();
   }
@@ -117,6 +124,18 @@ export default class BoardPresenter {
 
   //   this.points = getElementByKey('type', this.#currentSortType, this.#sortings).points;
   // }
+
+  #clearBoard({resetSortType = false} = {}) {
+    this.#clearPointsList();
+
+    remove(this.#sortComponent);
+    remove(this.#emptyListComponent);
+    remove(this.#filtersComponent);
+
+    if (resetSortType) {
+      this.#currentSortType = SortingType.DAY;
+    }
+  }
 
   #renderBoard() {
     this.#renderCost();
@@ -153,11 +172,13 @@ export default class BoardPresenter {
       case UpdateType.PATCH:
         this.#pointPresenters.get(data.id).init(data);
         break;
-      case UserAction.ADD_POINT:
-
+      case UpdateType.MINOR:
+        this.#clearBoard();
+        this.#renderBoard();
         break;
-      case UserAction.DELETE_POINT:
-
+      case UpdateType.MAJOR:
+        this.#clearBoard({resetSortType: true});
+        this.#renderBoard();
         break;
     }
   };
@@ -174,7 +195,7 @@ export default class BoardPresenter {
     }
 
     this.#currentSortType = sortType;
-
+    this.#clearBoard();
     this.#renderPointsList();
   };
 }

@@ -21,7 +21,7 @@ function padNumber(value) {
 }
 
 function toISOString(date) {
-  return dayjs(date).toISOString();
+  return date.toISOString();
 }
 
 function humanizeDuration(dateFrom, dateTo) {
