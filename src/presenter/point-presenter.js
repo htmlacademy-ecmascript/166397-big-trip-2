@@ -1,7 +1,7 @@
 import { render, replace, remove } from '../framework/render';
 import PointEditView from '../view/point-edit-view/point-edit-view';
 import PointView from '../view/point-view/point-view';
-import { PointMode } from '../const';
+import { PointMode, UserAction, UpdateType } from '../const';
 
 export default class PointPresenter {
   #point = null;
@@ -14,7 +14,7 @@ export default class PointPresenter {
   #handleDataChange = null;
   #pointsModel = null;
   #handleModeChange = null;
-  #mode = PointMode.DEFAULT;
+  #mode = PointMode.VIEW;
 
   constructor({ listContainer, onDataChange, pointsModel, onModeChange }) {
     this.#listContainer = listContainer;
@@ -53,7 +53,7 @@ export default class PointPresenter {
       return;
     }
 
-    if (this.#mode === PointMode.DEFAULT) {
+    if (this.#mode === PointMode.VIEW) {
       replace(this.#pointComponent, prevPointComponent);
     }
 
@@ -83,12 +83,12 @@ export default class PointPresenter {
       replace(this.#pointComponent, this.#pointEditComponent);
       document.removeEventListener('keydown', this.#documentKeydownHandler);
 
-      this.#mode = PointMode.DEFAULT;
+      this.#mode = PointMode.VIEW;
     }
   }
 
   resetMode() {
-    if (this.#mode !== PointMode.DEFAULT) {
+    if (this.#mode !== PointMode.VIEW) {
       this.#pointEditComponent.reset(this.#point);
       this.#togglePointMode();
     }
@@ -103,7 +103,7 @@ export default class PointPresenter {
   };
 
   #handleRollupClick = () => {
-    if (this.#mode === PointMode.DEFAULT) {
+    if (this.#mode === PointMode.VIEW) {
       this.#handleModeChange();
     }
 
@@ -111,12 +111,12 @@ export default class PointPresenter {
   };
 
   #handleFormSubmit = (task) => {
-    this.#handleDataChange(task);
+    this.#handleDataChange(UserAction.UPDATE_TASK, UpdateType.MINOR, task);
     this.#togglePointMode();
   };
 
   #handleFavoriteClick = () => {
     // eslint-disable-next-line camelcase
-    this.#handleDataChange({...this.#point, is_favorite: !this.#point.is_favorite});
+    this.#handleDataChange(UserAction.UPDATE_TASK, UpdateType.MINOR, {...this.#point, is_favorite: !this.#point.is_favorite});
   };
 }

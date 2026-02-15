@@ -29,6 +29,8 @@ export default class BoardPresenter {
     this.#tripInfoContainer = tripInfoContainer;
     this.#filtersContainer = filtersContainer;
     this.#pointsModel = pointsModel;
+
+    this.#pointsModel.addObserver(this.#handleModelEvent);
   }
 
   get points() {
@@ -72,7 +74,7 @@ export default class BoardPresenter {
     const pointPresenter = new PointPresenter({
       listContainer: this.#listView.element,
       pointsModel: this.#pointsModel,
-      onDataChange: this.#pointDataChangeHandler,
+      onDataChange: this.#handleViewAction,
       onModeChange: this.#handleModeChange
     });
 
@@ -123,12 +125,21 @@ export default class BoardPresenter {
     this.#renderPointsList();
   }
 
-  #pointDataChangeHandler = (newPoint) => {
-    this.#pointsModel.updateTask(newPoint);
-    // this.#points = [...this.#pointsModel.points];
-    // this.#sortings = generateSorting(this.points);
-    this.#pointPresenters.get(newPoint.id).init(newPoint);
-    this.#renderPointsList();
+  // #pointDataChangeHandler = (newPoint) => {
+  //   this.#pointsModel.updatePoint(newPoint);
+  //   // this.#points = [...this.#pointsModel.points];
+  //   // this.#sortings = generateSorting(this.points);
+  //   this.#pointPresenters.get(newPoint.id).init(newPoint);
+  //   this.#renderPointsList();
+  // };
+
+  #handleViewAction = (actionType, updateType, data) => {
+    console.log(actionType, updateType, data);
+  };
+
+
+  #handleModelEvent = (updateType, data) => {
+    console.log(updateType, data);
   };
 
   #handleModeChange = () => {
