@@ -26,6 +26,7 @@ export default class BoardPresenter {
   #sortComponent = null;
   #emptyListComponent = null;
   #filtersComponent = null;
+  #costComponent = null;
 
   constructor({boardContainer, tripInfoContainer, filtersContainer, pointsModel}) {
     this.#boardContainer = boardContainer;
@@ -51,7 +52,8 @@ export default class BoardPresenter {
   }
 
   #renderCost() {
-    render(new CostView(), this.#tripInfoContainer);
+    this.#costComponent = new CostView();
+    render(this.#costComponent, this.#tripInfoContainer);
   }
 
   #renderFilters() {
@@ -131,6 +133,7 @@ export default class BoardPresenter {
     remove(this.#sortComponent);
     remove(this.#emptyListComponent);
     remove(this.#filtersComponent);
+    remove(this.#costComponent);
 
     if (resetSortType) {
       this.#currentSortType = SortingType.DAY;
@@ -196,6 +199,6 @@ export default class BoardPresenter {
 
     this.#currentSortType = sortType;
     this.#clearBoard();
-    this.#renderPointsList();
+    this.#renderBoard();
   };
 }

@@ -45,7 +45,8 @@ export default class PointPresenter {
       destinations: this.#destinations,
       getOffers: this.#getOffers,
       onRollupClick: this.#handleRollupClick,
-      onFormSubmit: this.#handleFormSubmit
+      onFormSubmit: this.#handleFormSubmit,
+      onDeleteClick: this.#handleDeleteClick
     });
 
     if (!prevPointComponent || !prevPointEditComponent) {
@@ -110,9 +111,14 @@ export default class PointPresenter {
     this.#togglePointMode();
   };
 
-  #handleFormSubmit = (task) => {
-    this.#handleDataChange(UserAction.UPDATE_POINT, UpdateType.MINOR, task);
+  #handleFormSubmit = (update) => {
+    const isPatchUpdate = update.type !== this.#point.type || update.destination !== this.#point.destination;
+    this.#handleDataChange(UserAction.UPDATE_POINT, isPatchUpdate ? UpdateType.PATCH : UpdateType.MINOR, update);
     this.#togglePointMode();
+  };
+
+  #handleDeleteClick = (task) => {
+    this.#handleDataChange(UserAction.DELETE_POINT, UpdateType.MINOR, task);
   };
 
   #handleFavoriteClick = () => {
