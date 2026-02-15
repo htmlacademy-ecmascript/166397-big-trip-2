@@ -17,7 +17,7 @@ export default class BoardPresenter {
   #tripInfoContainer = null;
   #filtersContainer = null;
   #pointsModel = null;
-  #points = [];
+  // #points = [];
   #filters = [];
   #sortings = [];
   #isSortingsExist = false;
@@ -32,13 +32,14 @@ export default class BoardPresenter {
   }
 
   get points() {
-    return this.#pointsModel.points;
+    const sortings = generateSorting(this.#pointsModel.points);
+    return getElementByKey('type', this.#currentSortType, sortings).points;
   }
 
   init() {
-    this.#points = [...this.#pointsModel.points];
-    this.#filters = generateFilters(this.#points);
-    this.#sortings = generateSorting(this.#points);
+    // this.#points = [...this.#pointsModel.points];
+    this.#filters = generateFilters(this.points);
+    this.#sortings = generateSorting(this.points);
     this.#isSortingsExist = Boolean(this.#sortings.length);
 
     this.#renderBoard();
@@ -81,9 +82,9 @@ export default class BoardPresenter {
   }
 
   #renderPoints() {
-    this.#sortPoints();
+    // this.#sortPoints();
 
-    this.#points.forEach((point) => {
+    this.points.forEach((point) => {
       this.#renderPoint(point);
     });
   }
@@ -97,7 +98,7 @@ export default class BoardPresenter {
   }
 
   #renderPointsList() {
-    if (!this.#points.length) {
+    if (!this.points.length) {
       this.#renderEmptyList();
       return;
     }
@@ -107,13 +108,13 @@ export default class BoardPresenter {
     this.#renderPoints();
   }
 
-  #sortPoints() {
-    if (!this.#isSortingsExist) {
-      return;
-    }
+  // #sortPoints() {
+  //   if (!this.#isSortingsExist) {
+  //     return;
+  //   }
 
-    this.#points = getElementByKey('type', this.#currentSortType, this.#sortings).points;
-  }
+  //   this.points = getElementByKey('type', this.#currentSortType, this.#sortings).points;
+  // }
 
   #renderBoard() {
     this.#renderCost();
@@ -124,8 +125,8 @@ export default class BoardPresenter {
 
   #pointDataChangeHandler = (newPoint) => {
     this.#pointsModel.updateTask(newPoint);
-    this.#points = [...this.#pointsModel.points];
-    this.#sortings = generateSorting(this.#points);
+    // this.#points = [...this.#pointsModel.points];
+    // this.#sortings = generateSorting(this.points);
     this.#pointPresenters.get(newPoint.id).init(newPoint);
     this.#renderPointsList();
   };
