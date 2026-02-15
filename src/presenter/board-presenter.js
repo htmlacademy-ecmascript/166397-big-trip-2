@@ -31,6 +31,10 @@ export default class BoardPresenter {
     this.#pointsModel = pointsModel;
   }
 
+  get points() {
+    return this.#pointsModel.points;
+  }
+
   init() {
     this.#points = [...this.#pointsModel.points];
     this.#filters = generateFilters(this.#points);

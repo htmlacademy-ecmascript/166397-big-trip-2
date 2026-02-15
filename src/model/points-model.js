@@ -2,10 +2,11 @@ import { getRandomPoint } from '../mocks/point';
 import { getMockOffers } from '../mocks/offer';
 import { getMockDestinations } from '../mocks/destination';
 import { updateElement, getElementByKey } from '../utils/common';
+import Observable from '../framework/observable';
 
 const POINT_COUNT = 4;
 
-export default class PointsModel {
+export default class PointsModel extends Observable {
   #points = [];
   #destinations = [];
   #offers = [];
