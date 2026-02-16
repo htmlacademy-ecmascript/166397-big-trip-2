@@ -21,6 +21,7 @@ const boardPresenter = new BoardPresenter({
   boardContainer: tripContainerElement,
   tripInfoContainer: tripInfo.element,
   pointsModel,
+  filterModel
 });
 
 const filterPresenter = new FilterPresenter({

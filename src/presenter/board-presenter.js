@@ -7,6 +7,7 @@ import { render, remove } from '../framework/render';
 import { generateSorting } from '../mocks/sorting';
 import { getElementByKey } from '../utils/common';
 import { SortingType, UpdateType, UserAction } from '../const';
+import { filter } from '../utils/filter';
 import PointPresenter from './point-presenter';
 
 export default class BoardPresenter {
@@ -22,24 +23,33 @@ export default class BoardPresenter {
   #sortComponent = null;
   #emptyListComponent = null;
   #costComponent = null;
+  #filterModel = null;
 
-  constructor({boardContainer, tripInfoContainer, pointsModel}) {
+  constructor({boardContainer, tripInfoContainer, pointsModel, filterModel}) {
     this.#boardContainer = boardContainer;
     this.#tripInfoContainer = tripInfoContainer;
     this.#pointsModel = pointsModel;
+    this.#filterModel = filterModel;
 
     this.#pointsModel.addObserver(this.#handleModelEvent);
+    this.#filterModel.addObserver(this.#handleModelEvent);
+
   }
 
   get points() {
-    const sortings = generateSorting(this.#pointsModel.points);
+    const currentFilterType = this.#filterModel.filter;
+    const points = this.#pointsModel.points;
+    const filteredPoints = filter[currentFilterType](points);
+
+    const sortings = generateSorting(filteredPoints);
+    this.#isSortingsExist = Boolean(sortings.length);
     return getElementByKey('type', this.#currentSortType, sortings).points;
   }
 
   init() {
     // this.#points = [...this.#pointsModel.points];
-    this.#sortings = generateSorting(this.points);
-    this.#isSortingsExist = Boolean(this.#sortings.length);
+    // this.#sortings = generateSorting(this.points);
+    // this.#isSortingsExist = Boolean(this.#sortings.length);
 
     this.#renderBoard();
   }

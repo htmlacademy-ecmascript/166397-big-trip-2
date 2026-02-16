@@ -22,6 +22,6 @@ export default class FiltersView extends AbstractView {
 
   #filterChangeHandler = (evt) => {
     evt.preventDefault();
-    this.#handleFilterChange();
+    this.#handleFilterChange(this.element['trip-filter'].value);
   };
 }
