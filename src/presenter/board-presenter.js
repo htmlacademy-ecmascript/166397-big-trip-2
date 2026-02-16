@@ -6,7 +6,7 @@ import ListEmptyView from '../view/list-empty-view';
 import { render, remove } from '../framework/render';
 import { generateSorting } from '../mocks/sorting';
 import { getElementByKey } from '../utils/common';
-import { SortingType, UpdateType, UserAction } from '../const';
+import { SortingType, UpdateType, UserAction, FilterType } from '../const';
 import { filter } from '../utils/filter';
 import PointPresenter from './point-presenter';
 
@@ -20,6 +20,7 @@ export default class BoardPresenter {
   #isSortingsExist = false;
   #pointPresenters = new Map();
   #currentSortType = SortingType.DAY;
+  #currentFilterType = FilterType.EVERYTHING;
   #sortComponent = null;
   #emptyListComponent = null;
   #costComponent = null;
@@ -37,9 +38,9 @@ export default class BoardPresenter {
   }
 
   get points() {
-    const currentFilterType = this.#filterModel.filter;
+    this.#currentFilterType = this.#filterModel.filter;
     const points = this.#pointsModel.points;
-    const filteredPoints = filter[currentFilterType](points);
+    const filteredPoints = filter[this.#currentFilterType](points);
 
     const sortings = generateSorting(filteredPoints);
     this.#isSortingsExist = Boolean(sortings.length);
@@ -73,7 +74,7 @@ export default class BoardPresenter {
   }
 
   #renderEmptyList() {
-    this.#emptyListComponent = new ListEmptyView();
+    this.#emptyListComponent = new ListEmptyView({filterType: this.#currentFilterType});
     render(this.#emptyListComponent, this.#boardContainer);
   }
 
@@ -129,7 +130,9 @@ export default class BoardPresenter {
     this.#clearPointsList();
 
     remove(this.#sortComponent);
-    remove(this.#emptyListComponent);
+    if (this.#emptyListComponent) {
+      remove(this.#emptyListComponent);
+    }
     remove(this.#costComponent);
 
     if (resetSortType) {
