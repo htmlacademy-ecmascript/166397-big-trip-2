@@ -1,11 +1,9 @@
 
 import SortView from '../view/sort-view/sort-view';
 import ListView from '../view/list-view';
-import FiltersView from '../view/filters-view/filters-view';
 import CostView from '../view/cost-view';
 import ListEmptyView from '../view/list-empty-view';
 import { render, remove } from '../framework/render';
-import { generateFilters } from '../mocks/filter';
 import { generateSorting } from '../mocks/sorting';
 import { getElementByKey } from '../utils/common';
 import { SortingType, UpdateType, UserAction } from '../const';
@@ -15,23 +13,19 @@ export default class BoardPresenter {
   #listView = new ListView();
   #boardContainer = null;
   #tripInfoContainer = null;
-  #filtersContainer = null;
   #pointsModel = null;
   // #points = [];
-  #filters = [];
   #sortings = [];
   #isSortingsExist = false;
   #pointPresenters = new Map();
   #currentSortType = SortingType.DAY;
   #sortComponent = null;
   #emptyListComponent = null;
-  #filtersComponent = null;
   #costComponent = null;
 
-  constructor({boardContainer, tripInfoContainer, filtersContainer, pointsModel}) {
+  constructor({boardContainer, tripInfoContainer, pointsModel}) {
     this.#boardContainer = boardContainer;
     this.#tripInfoContainer = tripInfoContainer;
-    this.#filtersContainer = filtersContainer;
     this.#pointsModel = pointsModel;
 
     this.#pointsModel.addObserver(this.#handleModelEvent);
@@ -44,7 +38,6 @@ export default class BoardPresenter {
 
   init() {
     // this.#points = [...this.#pointsModel.points];
-    this.#filters = generateFilters(this.points);
     this.#sortings = generateSorting(this.points);
     this.#isSortingsExist = Boolean(this.#sortings.length);
 
@@ -54,11 +47,6 @@ export default class BoardPresenter {
   #renderCost() {
     this.#costComponent = new CostView();
     render(this.#costComponent, this.#tripInfoContainer);
-  }
-
-  #renderFilters() {
-    this.#filtersComponent = new FiltersView({ filters: this.#filters });
-    render(this.#filtersComponent, this.#filtersContainer);
   }
 
   #renderSort() {
@@ -132,7 +120,6 @@ export default class BoardPresenter {
 
     remove(this.#sortComponent);
     remove(this.#emptyListComponent);
-    remove(this.#filtersComponent);
     remove(this.#costComponent);
 
     if (resetSortType) {
@@ -142,7 +129,6 @@ export default class BoardPresenter {
 
   #renderBoard() {
     this.#renderCost();
-    this.#renderFilters();
     this.#renderSort();
     this.#renderPointsList();
   }
