@@ -1,13 +1,11 @@
 
-import SortView from '../view/sort-view/sort-view';
 import ListView from '../view/list-view';
 import CostView from '../view/cost-view';
 import ListEmptyView from '../view/list-empty-view';
 import { render, remove } from '../framework/render';
-import { generateSorting } from '../mocks/sorting';
-import { getElementByKey } from '../utils/common';
 import { SortingType, UpdateType, UserAction, FilterType } from '../const';
 import { filter } from '../utils/filter';
+import { sorting } from '../utils/sorting';
 import PointPresenter from './point-presenter';
 
 export default class BoardPresenter {
@@ -25,26 +23,32 @@ export default class BoardPresenter {
   #emptyListComponent = null;
   #costComponent = null;
   #filterModel = null;
+  #sortModel = null;
 
-  constructor({boardContainer, tripInfoContainer, pointsModel, filterModel}) {
+  constructor({boardContainer, tripInfoContainer, pointsModel, filterModel, sortModel}) {
+
     this.#boardContainer = boardContainer;
     this.#tripInfoContainer = tripInfoContainer;
     this.#pointsModel = pointsModel;
     this.#filterModel = filterModel;
+    this.#sortModel = sortModel;
 
     this.#pointsModel.addObserver(this.#handleModelEvent);
     this.#filterModel.addObserver(this.#handleModelEvent);
-
+    this.#sortModel.addObserver(this.#handleModelEvent);
   }
 
   get points() {
     this.#currentFilterType = this.#filterModel.filter;
+    this.#currentSortType = this.#sortModel.sort;
     const points = this.#pointsModel.points;
     const filteredPoints = filter[this.#currentFilterType](points);
 
-    const sortings = generateSorting(filteredPoints);
-    this.#isSortingsExist = Boolean(sortings.length);
-    return getElementByKey('type', this.#currentSortType, sortings).points;
+
+    const sortingPoints = sorting[this.#currentSortType](filteredPoints);
+
+
+    return sortingPoints;
   }
 
   init() {
@@ -60,18 +64,6 @@ export default class BoardPresenter {
     render(this.#costComponent, this.#tripInfoContainer);
   }
 
-  #renderSort() {
-    if (!this.#isSortingsExist) {
-      return;
-    }
-
-    this.#sortComponent = new SortView({
-      sortings: this.#sortings,
-      onSortChange: this.#sortChangeHandler
-    });
-
-    render(this.#sortComponent, this.#boardContainer);
-  }
 
   #renderEmptyList() {
     this.#emptyListComponent = new ListEmptyView({filterType: this.#currentFilterType});
@@ -134,16 +126,21 @@ export default class BoardPresenter {
       remove(this.#emptyListComponent);
     }
     remove(this.#costComponent);
+    this.#currentFilterType = this.#filterModel.filter;
 
     if (resetSortType) {
-      this.#currentSortType = SortingType.DAY;
+
+      // this.#sortModel.setSort(UpdateType.MINOR, SortingType.DAY);
+      // this.#currentSortType = SortingType.DAY;
     }
+
   }
 
   #renderBoard() {
     this.#renderCost();
-    this.#renderSort();
+
     this.#renderPointsList();
+
   }
 
   // #pointDataChangeHandler = (newPoint) => {
@@ -191,13 +188,13 @@ export default class BoardPresenter {
     });
   };
 
-  #sortChangeHandler = (sortType) => {
-    if (this.#currentSortType === sortType) {
-      return;
-    }
+  // #sortChangeHandler = (sortType) => {
+  //   if (this.#currentSortType === sortType) {
+  //     return;
+  //   }
 
-    this.#currentSortType = sortType;
-    this.#clearBoard();
-    this.#renderBoard();
-  };
+  //   this.#currentSortType = sortType;
+  //   this.#clearBoard();
+  //   this.#renderBoard();
+  // };
 }

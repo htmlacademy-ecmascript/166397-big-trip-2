@@ -4,17 +4,19 @@ import AbstractView from '../../framework/view/abstract-view';
 export default class SortView extends AbstractView {
   #sortings = [];
   #handleSortChange = null;
+  #currentSort = null;
 
-  constructor({sortings, onSortChange}) {
+  constructor({sortings, currentSort, onSortChange}) {
     super();
     this.#sortings = sortings;
     this.#handleSortChange = onSortChange;
+    this.#currentSort = currentSort;
 
     this.#initEventListeners();
   }
 
   get template() {
-    return createSortTemplate(this.#sortings);
+    return createSortTemplate(this.#sortings, this.#currentSort);
   }
 
   #initEventListeners() {

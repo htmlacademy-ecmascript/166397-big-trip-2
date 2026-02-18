@@ -3,7 +3,9 @@ import TripInfoView from './view/trip-info-view';
 import TripView from './view/trip-view';
 import PointsModel from './model/points-model';
 import FilterModel from './model/filter-model';
+import SortModel from './model/sort-model';
 import FilterPresenter from './presenter/filter-presenter';
+import SortPresenter from './presenter/sort-presenter';
 
 import { render, RenderPosition } from './framework/render';
 
@@ -15,18 +17,27 @@ const tripMainElement = headerElement.querySelector('.trip-main');
 
 const pointsModel = new PointsModel();
 const filterModel = new FilterModel();
+const sortModel = new SortModel();
 
 const tripInfo = new TripInfoView();
+
 const boardPresenter = new BoardPresenter({
   boardContainer: tripContainerElement,
   tripInfoContainer: tripInfo.element,
   pointsModel,
-  filterModel
+  filterModel,
+  sortModel
 });
 
 const filterPresenter = new FilterPresenter({
   filterContainer: filtersContainerElement,
   filterModel,
+  pointsModel
+});
+
+const sortPresenter = new SortPresenter({
+  sortContainer: tripContainerElement,
+  sortModel,
   pointsModel
 });
 
@@ -36,5 +47,6 @@ render(new TripView(), tripInfo.element);
 
 pointsModel.init().finally(() => {
   filterPresenter.init();
+  sortPresenter.init();
   boardPresenter.init();
 });

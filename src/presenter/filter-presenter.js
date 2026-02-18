@@ -1,5 +1,5 @@
 import { filter} from '../utils/filter';
-import { render } from '../framework/render';
+import { remove, render, replace } from '../framework/render';
 import FiltersView from '../view/filters-view/filters-view';
 import { UpdateType } from '../const';
 
@@ -30,15 +30,21 @@ export default class FilterPresenter {
   }
 
   init() {
-    if (this.#filterComponent === null) {
-      this.#filterComponent = new FiltersView({
-        filters: this.filters,
-        currentFilter: 'everything',
-        onFilterChange: this.#handleFilterTypeChange
-      });
+    const prevFilterComponent = this.#filterComponent;
 
+    this.#filterComponent = new FiltersView({
+      filters: this.filters,
+      currentFilter: this.#filterModel.filter,
+      onFilterChange: this.#handleFilterTypeChange
+    });
+
+    if (prevFilterComponent === null) {
       render(this.#filterComponent, this.#filterContainer);
+      return;
     }
+
+    replace(this.#filterComponent, prevFilterComponent);
+    remove(prevFilterComponent);
   }
 
   #handleModelEvent = () => {

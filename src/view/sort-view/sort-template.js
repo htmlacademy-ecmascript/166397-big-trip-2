@@ -1,10 +1,10 @@
 import { capitalizeString } from '../../utils/common';
-import { SortingType } from '../../const';
 
-function createSortItemTemplate({type, points}) {
+function createSortItemTemplate(sortItem, currentSort) {
+  const {type, points} = sortItem;
   const capitalizedType = capitalizeString(type);
   const disabled = points ? '' : 'disabled';
-  const checked = type === SortingType.DAY ? 'checked' : '';
+  const checked = type === currentSort ? 'checked' : '';
 
   return `
     <div class="trip-sort__item  trip-sort__item--${type}">
@@ -14,8 +14,8 @@ function createSortItemTemplate({type, points}) {
   `;
 }
 
-function createSortTemplate(sortings) {
-  const sortingItemsTemplate = sortings.map((sortingItem) => createSortItemTemplate(sortingItem)).join('');
+function createSortTemplate(sortings, currentSort) {
+  const sortingItemsTemplate = sortings.map((sortingItem) => createSortItemTemplate(sortingItem, currentSort)).join('');
 
   return (`
     <form class="trip-events__trip-sort  trip-sort" action="#" method="get">
