@@ -28,6 +28,7 @@ export default class PointsModel extends Observable {
       this.#points = await Array.from({length: POINT_COUNT}, getRandomPoint);
       this.#destinations = await getMockDestinations();
       this.#offers = await getMockOffers();
+
     } catch {
       this.#points = [];
       this.#destinations = [];

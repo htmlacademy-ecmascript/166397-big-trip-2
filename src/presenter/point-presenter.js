@@ -2,6 +2,7 @@ import { render, replace, remove } from '../framework/render';
 import PointEditView from '../view/point-edit-view/point-edit-view';
 import PointView from '../view/point-view/point-view';
 import { PointMode, UserAction, UpdateType } from '../const';
+import { isEscKey } from '../utils/common';
 
 export default class PointPresenter {
   #point = null;
@@ -96,7 +97,7 @@ export default class PointPresenter {
   }
 
   #documentKeydownHandler = (evt) => {
-    if (evt.key === 'Escape') {
+    if (isEscKey(evt)) {
       evt.preventDefault();
       this.#pointEditComponent.reset(this.#point);
       this.#togglePointMode();

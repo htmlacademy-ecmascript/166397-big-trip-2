@@ -1,18 +1,20 @@
 import { filter} from '../utils/filter';
 import { remove, render, replace } from '../framework/render';
 import FiltersView from '../view/filters-view/filters-view';
-import { UpdateType } from '../const';
+import { UpdateType, SortingType } from '../const';
 
 export default class FilterPresenter {
   #filterContainer = null;
   #filterModel = null;
   #pointsModel = null;
   #filterComponent = null;
+  #sortModel = null;
 
-  constructor({filterContainer, filterModel, pointsModel}) {
+  constructor({filterContainer, filterModel, pointsModel, sortModel}) {
     this.#filterContainer = filterContainer;
     this.#filterModel = filterModel;
     this.#pointsModel = pointsModel;
+    this.#sortModel = sortModel;
 
     this.#filterModel.addObserver(this.#handleModelEvent);
     this.#pointsModel.addObserver(this.#handleModelEvent);
@@ -57,5 +59,6 @@ export default class FilterPresenter {
     }
 
     this.#filterModel.setFilter(UpdateType.MAJOR, filterType);
+    this.#sortModel.setSort(UpdateType.MAJOR, SortingType.DAY);
   };
 }

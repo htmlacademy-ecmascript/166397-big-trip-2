@@ -6,6 +6,7 @@ import FilterModel from './model/filter-model';
 import SortModel from './model/sort-model';
 import FilterPresenter from './presenter/filter-presenter';
 import SortPresenter from './presenter/sort-presenter';
+import NewPointButtonView from './view/new-point-button-view';
 
 import { render, RenderPosition } from './framework/render';
 
@@ -21,18 +22,24 @@ const sortModel = new SortModel();
 
 const tripInfo = new TripInfoView();
 
+const newPointButtonComponent = new NewPointButtonView({
+  onClick: handleNewPointButtonClick,
+});
+
 const boardPresenter = new BoardPresenter({
   boardContainer: tripContainerElement,
   tripInfoContainer: tripInfo.element,
   pointsModel,
   filterModel,
-  sortModel
+  sortModel,
+  onNewPointDestroy: handleNewPointFormClose
 });
 
 const filterPresenter = new FilterPresenter({
   filterContainer: filtersContainerElement,
   filterModel,
-  pointsModel
+  pointsModel,
+  sortModel
 });
 
 const sortPresenter = new SortPresenter({
@@ -43,7 +50,16 @@ const sortPresenter = new SortPresenter({
 
 render(tripInfo, tripMainElement, RenderPosition.AFTERBEGIN);
 render(new TripView(), tripInfo.element);
+render(newPointButtonComponent, tripMainElement);
 
+function handleNewPointFormClose() {
+  newPointButtonComponent.element.disabled = false;
+}
+
+function handleNewPointButtonClick() {
+  boardPresenter.createPoint();
+  newPointButtonComponent.element.disabled = false;
+}
 
 pointsModel.init().finally(() => {
   filterPresenter.init();

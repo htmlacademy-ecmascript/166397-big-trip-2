@@ -22,4 +22,8 @@ function getDuration(dateFrom, dateTo) {
   return dayjs.duration(formattedDateTo.diff(formattedDateFrom));
 }
 
-export { getRandomArrayElement, getElementByKey, capitalizeString, getDuration };
+function isEscKey(evt) {
+  return evt.key === 'Escape' || evt.key === 'Esc';
+}
+
+export { getRandomArrayElement, getElementByKey, capitalizeString, getDuration, isEscKey };
