@@ -3,6 +3,7 @@ import { getMockOffers } from '../mocks/offer';
 import { getMockDestinations } from '../mocks/destination';
 import { getElementByKey } from '../utils/common';
 import Observable from '../framework/observable';
+import he from 'he';
 
 const POINT_COUNT = 4;
 
@@ -51,9 +52,11 @@ export default class PointsModel extends Observable {
       throw new Error('Can\'t update unexisting point');
     }
 
+    const encodedUpdate = this.#encodeData(update);
+
     this.#points = [
       ...this.#points.slice(0, index),
-      update,
+      encodedUpdate,
       ...this.#points.slice(index + 1),
     ];
 
@@ -61,8 +64,10 @@ export default class PointsModel extends Observable {
   }
 
   addPoint(updateType, update) {
+    const encodedUpdate = this.#encodeData(update);
+
     this.#points = [
-      update,
+      encodedUpdate,
       ...this.#points,
     ];
 
@@ -79,5 +84,17 @@ export default class PointsModel extends Observable {
     this.#points = this.#points.filter((point) => point.id !== update.id);
 
     this._notify(updateType, update);
+  }
+
+  #encodeData(point) {
+    const map = new Map(Object.entries(point));
+
+    for (const [key, value] of map.entries()) {
+      if (typeof value === 'string') {
+        map.set(key, he.encode(value));
+      }
+    }
+
+    return Object.fromEntries(map.entries());
   }
 }
