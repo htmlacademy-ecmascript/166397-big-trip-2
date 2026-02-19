@@ -30,9 +30,9 @@ export default class NewPointPresenter {
     this.#pointEditComponent = new PointEditView({
       destinations: this.#destinations,
       getOffers: this.#getOffers,
-      // onRollupClick: this.#rollupClickHandler,
       onFormSubmit: this.#formSubmitHandler,
-      onDeleteClick: this.#deleteClickHandler
+      onDeleteClick: this.#deleteClickHandler,
+      isNewTask: true
     });
 
     render(this.#pointEditComponent, this.#pointsListContainer, RenderPosition.AFTERBEGIN);
@@ -54,10 +54,6 @@ export default class NewPointPresenter {
   }
 
   #getOffers = (type) => this.#pointsModel.getOffersByType(type);
-
-  // #rollupClickHandler = () => {
-
-  // };
 
   #formSubmitHandler = (point) => {
     this.#handleDataChange(UserAction.ADD_POINT, UpdateType.MINOR, {...point, id: nanoid()});

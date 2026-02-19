@@ -14,9 +14,6 @@ export default class BoardPresenter {
   #boardContainer = null;
   #tripInfoContainer = null;
   #pointsModel = null;
-  // #points = [];
-  #sortings = [];
-  #isSortingsExist = false;
   #pointPresenters = new Map();
   #currentSortType = SortingType.DAY;
   #currentFilterType = FilterType.EVERYTHING;
@@ -59,10 +56,6 @@ export default class BoardPresenter {
   }
 
   init() {
-    // this.#points = [...this.#pointsModel.points];
-    // this.#sortings = generateSorting(this.points);
-    // this.#isSortingsExist = Boolean(this.#sortings.length);
-
     this.#renderBoard();
   }
 
@@ -76,7 +69,6 @@ export default class BoardPresenter {
     this.#costComponent = new CostView();
     render(this.#costComponent, this.#tripInfoContainer);
   }
-
 
   #renderEmptyList() {
     this.#emptyListComponent = new ListEmptyView({filterType: this.#currentFilterType});
@@ -97,8 +89,6 @@ export default class BoardPresenter {
   }
 
   #renderPoints() {
-    // this.#sortPoints();
-
     this.points.forEach((point) => {
       this.#renderPoint(point);
     });
@@ -118,20 +108,11 @@ export default class BoardPresenter {
       return;
     }
 
-    // this.#clearPointsList();
     render(this.#listView, this.#boardContainer);
     this.#renderPoints();
   }
 
-  // #sortPoints() {
-  //   if (!this.#isSortingsExist) {
-  //     return;
-  //   }
-
-  //   this.points = getElementByKey('type', this.#currentSortType, this.#sortings).points;
-  // }
-
-  #clearBoard({resetSortType = false} = {}) {
+  #clearBoard() {
     this.#newPointPresenter.destroy();
     this.#clearPointsList();
 
@@ -141,29 +122,12 @@ export default class BoardPresenter {
     }
     remove(this.#costComponent);
     this.#currentFilterType = this.#filterModel.filter;
-
-    if (resetSortType) {
-
-      // this.#sortModel.setSort(UpdateType.MAJOR, SortingType.DAY);
-      // this.#currentSortType = SortingType.DAY;
-    }
-
   }
 
   #renderBoard() {
     this.#renderCost();
-
     this.#renderPointsList();
-
   }
-
-  // #pointDataChangeHandler = (newPoint) => {
-  //   this.#pointsModel.updatePoint(newPoint);
-  //   // this.#points = [...this.#pointsModel.points];
-  //   // this.#sortings = generateSorting(this.points);
-  //   this.#pointPresenters.get(newPoint.id).init(newPoint);
-  //   this.#renderPointsList();
-  // };
 
   #handleViewAction = (actionType, updateType, update) => {
     switch (actionType) {
@@ -190,7 +154,7 @@ export default class BoardPresenter {
         this.#renderBoard();
         break;
       case UpdateType.MAJOR:
-        this.#clearBoard({resetSortType: true});
+        this.#clearBoard();
         this.#renderBoard();
         break;
     }
@@ -202,14 +166,4 @@ export default class BoardPresenter {
       presenter.resetMode();
     });
   };
-
-  // #sortChangeHandler = (sortType) => {
-  //   if (this.#currentSortType === sortType) {
-  //     return;
-  //   }
-
-  //   this.#currentSortType = sortType;
-  //   this.#clearBoard();
-  //   this.#renderBoard();
-  // };
 }

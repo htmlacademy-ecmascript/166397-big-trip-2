@@ -60,7 +60,15 @@ function createDestinationTemplate(description, picturesTemplate) {
   `;
 }
 
-function createPointEditTemplate(point, destinations, currentOffers) {
+function createRollupButtonTemplate() {
+  return `
+    <button class="event__rollup-btn" type="button">
+      <span class="visually-hidden">Open event</span>
+    </button>
+  `;
+}
+
+function createPointEditTemplate(point, destinations, currentOffers, isNewTask) {
   const { id, base_price: basePrice, date_from: dateFrom, date_to: dateTo, destination, offers, type, currentDestionationInput } = point;
 
   const currentDestination = getElementByKey('id', destination, destinations);
@@ -78,6 +86,7 @@ function createPointEditTemplate(point, destinations, currentOffers) {
   const destinationsTemplate = destinations?.length ? createDestinationsTemplate(destinations) : '';
   const eventTypesTemplate = DESTINATION_TYPES?.length ? createEventTypesTemplate(currentType, pointId) : '';
   const destinationTemplate = destination ? createDestinationTemplate(description, picturesTemplate) : '';
+  const rollupButtonTemplate = !isNewTask ? createRollupButtonTemplate() : '';
 
   return (`
     <li class="trip-events__item">
@@ -127,9 +136,7 @@ function createPointEditTemplate(point, destinations, currentOffers) {
 
           <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
           <button class="event__reset-btn" type="reset">Delete</button>
-          <button class="event__rollup-btn" type="button">
-            <span class="visually-hidden">Open event</span>
-          </button>
+          ${rollupButtonTemplate}
         </header>
         <section class="event__details">
           ${offersTemplate}

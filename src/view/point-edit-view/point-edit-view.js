@@ -26,11 +26,12 @@ export default class PointEditView extends AbstractStatulView {
   #handleFormSubmit = null;
   #handleDeleteClick = null;
   #getOffers = null;
+  #isNewTask = false;
 
   #datepickers = [];
   #form = null;
 
-  constructor({point = BLANK_POINT, destinations, getOffers, onRollupClick, onFormSubmit, onDeleteClick}) {
+  constructor({point = BLANK_POINT, destinations, getOffers, onRollupClick, onFormSubmit, onDeleteClick, isNewTask = false}) {
     super();
     this.#getOffers = getOffers;
     this._setState(PointEditView.parsePointToState(point));
@@ -38,12 +39,13 @@ export default class PointEditView extends AbstractStatulView {
     this.#handleRollupClick = onRollupClick;
     this.#handleFormSubmit = onFormSubmit;
     this.#handleDeleteClick = onDeleteClick;
+    this.#isNewTask = isNewTask;
 
     this._restoreHandlers();
   }
 
   get template() {
-    return createPointEditTemplate(this._state, this.#destinations, this.#getOffers(this._state.type));
+    return createPointEditTemplate(this._state, this.#destinations, this.#getOffers(this._state.type), this.#isNewTask);
   }
 
   removeElement() {
@@ -64,7 +66,12 @@ export default class PointEditView extends AbstractStatulView {
   _restoreHandlers() {
     this.#form = this.element.querySelector('form');
 
-    this.#form.querySelector('.event__rollup-btn').addEventListener('click', this.#rollupClickHandler);
+    const rollupButton = this.#form.querySelector('.event__rollup-btn');
+
+    if (rollupButton) {
+      rollupButton.addEventListener('click', this.#rollupClickHandler);
+    }
+
     this.#form.addEventListener('submit', this.#formSubmitHandler);
     this.#form.querySelector('.event__type-list').addEventListener('change', this.#typeChangeHandler);
     this.#form.querySelector('.event__input--destination').addEventListener('change', this.#destinationChangeHandler);
