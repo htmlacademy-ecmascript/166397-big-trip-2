@@ -58,7 +58,7 @@ function handleNewPointFormClose() {
 
 function handleNewPointButtonClick() {
   boardPresenter.createPoint();
-  newPointButtonComponent.element.disabled = false;
+  newPointButtonComponent.element.disabled = true;
 }
 
 pointsModel.init().finally(() => {
