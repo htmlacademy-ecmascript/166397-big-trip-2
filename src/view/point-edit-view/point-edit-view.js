@@ -117,7 +117,6 @@ export default class PointEditView extends AbstractStatulView {
 
     this.updateElement({
       destination: currentDestination,
-      currentDestionationInput: evt.target.value
     });
   };
 
@@ -179,14 +178,11 @@ export default class PointEditView extends AbstractStatulView {
   static parsePointToState(point) {
     return {
       ...point,
-      currentDestionationInput: null
     };
   }
 
   static parseStateToPoint(state) {
     const point = {...state};
-
-    delete point.currentDestionationInput;
 
     return point;
   }

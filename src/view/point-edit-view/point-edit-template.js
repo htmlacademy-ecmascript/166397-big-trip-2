@@ -69,7 +69,7 @@ function createRollupButtonTemplate() {
 }
 
 function createPointEditTemplate(point, destinations, currentOffers, isNewTask) {
-  const { id, base_price: basePrice, date_from: dateFrom, date_to: dateTo, destination, offers, type, currentDestionationInput } = point;
+  const { id, base_price: basePrice, date_from: dateFrom, date_to: dateTo, destination, offers, type } = point;
 
   const currentDestination = getElementByKey('id', destination, destinations);
 
@@ -79,7 +79,6 @@ function createPointEditTemplate(point, destinations, currentOffers, isNewTask) 
   const humanizedDateFrom = humanizePointDateAndTime(dateFrom);
   const humanizedDateTo = humanizePointDateAndTime(dateTo);
   const {name, description, pictures} = currentDestination || {};
-  const finalName = currentDestionationInput ? currentDestionationInput : name;
 
   const offersTemplate = currentOffers?.length ? createOffersTemplate(offers, currentOffers) : '';
   const picturesTemplate = pictures?.length ? createPicturesTemplate(pictures) : '';
@@ -112,7 +111,7 @@ function createPointEditTemplate(point, destinations, currentOffers, isNewTask) 
             <label class="event__label  event__type-output" for="event-destination-${pointId}">
               ${currentType}
             </label>
-            <input class="event__input  event__input--destination" id="event-destination-${pointId}" type="text" name="event-destination" value="${finalName || ''}" list="destination-list-${pointId}">
+            <input class="event__input  event__input--destination" id="event-destination-${pointId}" type="text" name="event-destination" value="${name || ''}" list="destination-list-${pointId}">
             <datalist id="destination-list-${pointId}">
               ${destinationsTemplate}
             </datalist>
@@ -131,7 +130,7 @@ function createPointEditTemplate(point, destinations, currentOffers, isNewTask) 
               <span class="visually-hidden">Price</span>
               &euro;
             </label>
-            <input class="event__input  event__input--price" id="event-price-${pointId}" type="text" name="event-price" value="${price}">
+            <input class="event__input  event__input--price" id="event-price-${pointId}" type="number" name="event-price" value="${price}">
           </div>
 
           <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
