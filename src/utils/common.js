@@ -15,10 +15,6 @@ function capitalizeString(value) {
   return value[0].toUpperCase() + value.slice(1, value.length);
 }
 
-function updateElement(elements, newElement) {
-  return elements.map((item) => item.id === newElement.id ? newElement : item);
-}
-
 function getDuration(dateFrom, dateTo) {
   const formattedDateTo = dayjs(dateTo);
   const formattedDateFrom = dayjs(dateFrom);
@@ -26,4 +22,8 @@ function getDuration(dateFrom, dateTo) {
   return dayjs.duration(formattedDateTo.diff(formattedDateFrom));
 }
 
-export { getRandomArrayElement, getElementByKey, capitalizeString, updateElement, getDuration };
+function isEscKey(evt) {
+  return evt.key === 'Escape' || evt.key === 'Esc';
+}
+
+export { getRandomArrayElement, getElementByKey, capitalizeString, getDuration, isEscKey };

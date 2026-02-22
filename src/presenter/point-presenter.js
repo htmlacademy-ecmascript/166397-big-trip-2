@@ -1,7 +1,8 @@
 import { render, replace, remove } from '../framework/render';
 import PointEditView from '../view/point-edit-view/point-edit-view';
 import PointView from '../view/point-view/point-view';
-import { PointMode } from '../const';
+import { PointMode, UserAction, UpdateType } from '../const';
+import { isEscKey } from '../utils/common';
 
 export default class PointPresenter {
   #point = null;
@@ -14,7 +15,7 @@ export default class PointPresenter {
   #handleDataChange = null;
   #pointsModel = null;
   #handleModeChange = null;
-  #mode = PointMode.DEFAULT;
+  #mode = PointMode.VIEW;
 
   constructor({ listContainer, onDataChange, pointsModel, onModeChange }) {
     this.#listContainer = listContainer;
@@ -45,7 +46,8 @@ export default class PointPresenter {
       destinations: this.#destinations,
       getOffers: this.#getOffers,
       onRollupClick: this.#handleRollupClick,
-      onFormSubmit: this.#handleFormSubmit
+      onFormSubmit: this.#handleFormSubmit,
+      onDeleteClick: this.#handleDeleteClick
     });
 
     if (!prevPointComponent || !prevPointEditComponent) {
@@ -53,7 +55,7 @@ export default class PointPresenter {
       return;
     }
 
-    if (this.#mode === PointMode.DEFAULT) {
+    if (this.#mode === PointMode.VIEW) {
       replace(this.#pointComponent, prevPointComponent);
     }
 
@@ -83,19 +85,19 @@ export default class PointPresenter {
       replace(this.#pointComponent, this.#pointEditComponent);
       document.removeEventListener('keydown', this.#documentKeydownHandler);
 
-      this.#mode = PointMode.DEFAULT;
+      this.#mode = PointMode.VIEW;
     }
   }
 
   resetMode() {
-    if (this.#mode !== PointMode.DEFAULT) {
+    if (this.#mode !== PointMode.VIEW) {
       this.#pointEditComponent.reset(this.#point);
       this.#togglePointMode();
     }
   }
 
   #documentKeydownHandler = (evt) => {
-    if (evt.key === 'Escape') {
+    if (isEscKey(evt)) {
       evt.preventDefault();
       this.#pointEditComponent.reset(this.#point);
       this.#togglePointMode();
@@ -103,20 +105,25 @@ export default class PointPresenter {
   };
 
   #handleRollupClick = () => {
-    if (this.#mode === PointMode.DEFAULT) {
+    if (this.#mode === PointMode.VIEW) {
       this.#handleModeChange();
     }
 
     this.#togglePointMode();
   };
 
-  #handleFormSubmit = (task) => {
-    this.#handleDataChange(task);
+  #handleFormSubmit = (update) => {
+    const isPatchUpdate = update.type !== this.#point.type || update.destination !== this.#point.destination;
+    this.#handleDataChange(UserAction.UPDATE_POINT, isPatchUpdate ? UpdateType.PATCH : UpdateType.MINOR, update);
     this.#togglePointMode();
+  };
+
+  #handleDeleteClick = (task) => {
+    this.#handleDataChange(UserAction.DELETE_POINT, UpdateType.MINOR, task);
   };
 
   #handleFavoriteClick = () => {
     // eslint-disable-next-line camelcase
-    this.#handleDataChange({...this.#point, is_favorite: !this.#point.is_favorite});
+    this.#handleDataChange(UserAction.UPDATE_POINT, UpdateType.PATCH, {...this.#point, is_favorite: !this.#point.is_favorite});
   };
 }

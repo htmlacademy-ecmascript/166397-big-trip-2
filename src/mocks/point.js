@@ -18,8 +18,8 @@ const mockPoints = [
   {
     id: '1',
     base_price: 700,
-    date_from: '2019-06-12T12:10:55.845Z',
-    date_to: '2019-06-12T15:22:13.375Z',
+    date_from: '2026-06-12T12:10:55.845Z',
+    date_to: '2026-06-12T15:22:13.375Z',
     destination: '1',
     is_favorite: false,
     offers: [],

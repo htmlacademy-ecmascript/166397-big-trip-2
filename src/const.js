@@ -1,15 +1,15 @@
 const DESTINATION_TYPES = ['taxi', 'bus', 'train', 'ship', 'drive', 'flight', 'check-in', 'sightseeing', 'restaurant'];
 
 const PointMode = {
-  DEFAULT: 'default',
+  VIEW: 'view',
   EDITING: 'editing'
 };
 
 const FilterType = {
-  EVERYTHING: 'Everything',
-  FUTURE: 'Future',
-  PRESENT: 'Present',
-  PAST: 'Past'
+  EVERYTHING: 'everything',
+  FUTURE: 'future',
+  PRESENT: 'present',
+  PAST: 'past'
 };
 
 const SortingType = {
@@ -20,4 +20,16 @@ const SortingType = {
   OFFERS: 'offers'
 };
 
-export { DESTINATION_TYPES, FilterType, SortingType, PointMode };
+const UserAction = {
+  UPDATE_POINT: 'UPDATE_POINT',
+  ADD_POINT: 'ADD_POINT',
+  DELETE_POINT: 'DELETE_POINT',
+};
+
+const UpdateType = {
+  PATCH: 'PATCH',
+  MINOR: 'MINOR',
+  MAJOR: 'MAJOR',
+};
+
+export { DESTINATION_TYPES, FilterType, SortingType, PointMode, UserAction, UpdateType };
