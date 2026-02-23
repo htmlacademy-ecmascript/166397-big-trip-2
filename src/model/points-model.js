@@ -2,6 +2,7 @@ import { getRandomPoint } from '../mocks/point';
 import { getMockOffers } from '../mocks/offer';
 import { getMockDestinations } from '../mocks/destination';
 import { getElementByKey, toCamelFromSnakeCase } from '../utils/common';
+import { UpdateType } from '../const';
 import Observable from '../framework/observable';
 import dayjs from 'dayjs';
 // import he from 'he';
@@ -56,6 +57,8 @@ export default class PointsModel extends Observable {
       this.#destinations = [];
       this.#offers = [];
     }
+
+    this._notify(UpdateType.INIT);
   }
 
   getDestinationById(id) {

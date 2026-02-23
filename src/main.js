@@ -72,3 +72,4 @@ filterPresenter.init();
 sortPresenter.init();
 boardPresenter.init();
 // });
+pointsModel.init();

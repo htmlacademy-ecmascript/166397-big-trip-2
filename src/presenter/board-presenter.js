@@ -2,6 +2,7 @@
 import ListView from '../view/list-view';
 import CostView from '../view/cost-view';
 import ListEmptyView from '../view/list-empty-view';
+import LoadingView from '../view/loading-view';
 import { render, remove } from '../framework/render';
 import { SortingType, UpdateType, UserAction, FilterType } from '../const';
 import { filter } from '../utils/filter';
@@ -10,7 +11,8 @@ import PointPresenter from './point-presenter';
 import NewPointPresenter from './new-point-presenter';
 
 export default class BoardPresenter {
-  #listView = new ListView();
+  #listComponent = new ListView();
+  #loadingComponent = new LoadingView();
   #boardContainer = null;
   #tripInfoContainer = null;
   #pointsModel = null;
@@ -23,6 +25,7 @@ export default class BoardPresenter {
   #filterModel = null;
   #sortModel = null;
   #newPointPresenter = null;
+  #isLoading = true;
 
   constructor({boardContainer, tripInfoContainer, pointsModel, filterModel, sortModel, onNewPointDestroy}) {
 
@@ -33,7 +36,7 @@ export default class BoardPresenter {
     this.#sortModel = sortModel;
 
     this.#newPointPresenter = new NewPointPresenter({
-      pointsListContainer: this.#listView.element,
+      pointsListContainer: this.#listComponent.element,
       onDataChange: this.#handleViewAction,
       onDestroy: onNewPointDestroy,
       pointsModel
@@ -70,6 +73,10 @@ export default class BoardPresenter {
     render(this.#costComponent, this.#tripInfoContainer);
   }
 
+  #renderLoading() {
+    render(this.#loadingComponent, this.#boardContainer);
+  }
+
   #renderEmptyList() {
     this.#emptyListComponent = new ListEmptyView({filterType: this.#currentFilterType});
     render(this.#emptyListComponent, this.#boardContainer);
@@ -77,7 +84,7 @@ export default class BoardPresenter {
 
   #renderPoint(point) {
     const pointPresenter = new PointPresenter({
-      listContainer: this.#listView.element,
+      listContainer: this.#listComponent.element,
       pointsModel: this.#pointsModel,
       onDataChange: this.#handleViewAction,
       onModeChange: this.#handleModeChange
@@ -108,7 +115,7 @@ export default class BoardPresenter {
       return;
     }
 
-    render(this.#listView, this.#boardContainer);
+    render(this.#listComponent, this.#boardContainer);
     this.#renderPoints();
   }
 
@@ -117,6 +124,7 @@ export default class BoardPresenter {
     this.#clearPointsList();
 
     remove(this.#sortComponent);
+    remove(this.#loadingComponent);
     if (this.#emptyListComponent) {
       remove(this.#emptyListComponent);
     }
@@ -125,6 +133,11 @@ export default class BoardPresenter {
   }
 
   #renderBoard() {
+    if (this.#isLoading) {
+      this.#renderLoading();
+      return;
+    }
+
     this.#renderCost();
     this.#renderPointsList();
   }
@@ -155,6 +168,11 @@ export default class BoardPresenter {
         break;
       case UpdateType.MAJOR:
         this.#clearBoard();
+        this.#renderBoard();
+        break;
+      case UpdateType.INIT:
+        this.#isLoading = false;
+        remove(this.#loadingComponent);
         this.#renderBoard();
         break;
     }
