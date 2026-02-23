@@ -6,15 +6,11 @@ import 'flatpickr/dist/flatpickr.min.css';
 
 const BLANK_POINT = {
   id: '0',
-  // eslint-disable-next-line camelcase
-  base_price: null,
-  // eslint-disable-next-line camelcase
-  date_from: '2019-03-19T00:00:00.00Z',
-  // eslint-disable-next-line camelcase
-  date_to: '2019-03-19T00:00:00.00Z',
+  basePrice: null,
+  dateFrom: new Date('2019-03-19T00:00:00.00Z'),
+  dateTo: new Date('2019-03-19T00:00:00.00Z'),
   destination: null,
-  // eslint-disable-next-line camelcase
-  is_favorite: false,
+  isFavorite: false,
   offers: [],
   type: 'flight'
 };
