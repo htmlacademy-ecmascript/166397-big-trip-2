@@ -36,38 +36,13 @@ export default class PointsApiService extends ApiService {
     return parsedResponse;
   }
 
-  // #adaptToServer(point) {
-  //   const map = new Map(Object.entries(point));
-
-
-  //   for (const [key, value] of map.entries()) {
-  //     let formattedValue = value;
-
-  //     if (typeof value === 'string') {
-  //       formattedValue = he.encode(value);
-  //     }
-
-  //     if (value instanceof Date) {
-  //       formattedValue = value.toISOString;
-  //     }
-
-  //     if (key.includes('_')) {
-  //       formattedValue = toCamelFromSnakeCase(value);
-  //     }
-
-  //     map.set(key, formattedValue);
-  //   }
-
-  //   return Object.fromEntries(map.entries());
-  // }
-
   #adaptToServer(point) {
     const formattedPoint = {};
 
     Object.entries(point).map(
       ([key, value]) => {
         let formattedValue = value instanceof Object ? structuredClone(value) : value;
-        // let formattedKey = key;
+        const formattedKey = toSnakeFromCameCase(key);
 
         if (typeof value === 'string') {
           formattedValue = he.encode(value);
@@ -77,13 +52,10 @@ export default class PointsApiService extends ApiService {
           formattedValue = value.toISOString();
         }
 
-        const formattedKey = toSnakeFromCameCase(key);
-
         formattedPoint[formattedKey] = formattedValue;
       },
     );
 
     return formattedPoint;
   }
-
 }

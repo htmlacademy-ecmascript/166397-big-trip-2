@@ -1,13 +1,7 @@
-import { getRandomPoint } from '../mocks/point';
-import { getMockOffers } from '../mocks/offer';
-import { getMockDestinations } from '../mocks/destination';
 import { getElementByKey, toCamelFromSnakeCase } from '../utils/common';
 import { UpdateType } from '../const';
 import Observable from '../framework/observable';
 import dayjs from 'dayjs';
-// import he from 'he';
-
-const POINT_COUNT = 4;
 
 export default class PointsModel extends Observable {
   #points = [];
@@ -18,18 +12,6 @@ export default class PointsModel extends Observable {
   constructor({pointsApiService}) {
     super();
     this.#pointsApiService = pointsApiService;
-
-    // this.#pointsApiService.points.then((points) => {
-    //   console.log(points);
-
-    //   console.log(points.map(this.#adaptToClient));
-    // });
-
-    // this.#pointsApiService.destinations.then((destionations) => {
-    //   console.log(destionations);
-    // });
-
-
   }
 
   get points() {
@@ -76,7 +58,6 @@ export default class PointsModel extends Observable {
       throw new Error('Can\'t update unexisting point');
     }
 
-    // const encodedUpdate = this.#encodeData(update);
     try {
       const response = await this.#pointsApiService.updatePoint(update);
       const updatedPoint = this.#adaptToClient(response);
@@ -90,13 +71,10 @@ export default class PointsModel extends Observable {
       this._notify(updateType, updatedPoint);
     } catch {
       throw new Error('Can\'t update point');
-
     }
   }
 
   addPoint(updateType, update) {
-    // const encodedUpdate = this.#encodeData(update);
-
     this.#points = [
       update,
       ...this.#points,
@@ -139,16 +117,4 @@ export default class PointsModel extends Observable {
 
     return formattedPoint;
   }
-
-  // #encodeData(point) {
-  //   const map = new Map(Object.entries(point));
-
-  //   for (const [key, value] of map.entries()) {
-  //     if (typeof value === 'string') {
-  //       map.set(key, he.encode(value));
-  //     }
-  //   }
-
-  //   return Object.fromEntries(map.entries());
-  // }
 }
