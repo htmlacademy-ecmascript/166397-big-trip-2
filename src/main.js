@@ -67,8 +67,8 @@ function handleNewPointButtonClick() {
   newPointButtonComponent.element.disabled = true;
 }
 
-pointsModel.init().finally(() => {
-  filterPresenter.init();
-  sortPresenter.init();
-  boardPresenter.init();
-});
+// pointsModel.init().finally(() => {
+filterPresenter.init();
+sortPresenter.init();
+boardPresenter.init();
+// });

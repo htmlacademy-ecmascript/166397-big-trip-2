@@ -18,10 +18,17 @@ export default class PointsModel extends Observable {
     super();
     this.#pointsApiService = pointsApiService;
 
-    this.#pointsApiService.points.then((points) => {
-      console.log(points);
-      console.log(points.map(this.#adaptToClient));
-    });
+    // this.#pointsApiService.points.then((points) => {
+    //   console.log(points);
+
+    //   console.log(points.map(this.#adaptToClient));
+    // });
+
+    // this.#pointsApiService.destinations.then((destionations) => {
+    //   console.log(destionations);
+    // });
+
+
   }
 
   get points() {
@@ -38,9 +45,11 @@ export default class PointsModel extends Observable {
 
   async init() {
     try {
-      this.#points = await Array.from({length: POINT_COUNT}, getRandomPoint);
-      this.#destinations = await getMockDestinations();
-      this.#offers = await getMockOffers();
+      const points = await this.#pointsApiService.points;
+
+      this.#points = points.map(this.#adaptToClient);
+      this.#destinations = await this.#pointsApiService.destinations;
+      this.#offers = await this.#pointsApiService.offers;
 
     } catch {
       this.#points = [];

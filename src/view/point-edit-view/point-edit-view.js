@@ -126,8 +126,7 @@ export default class PointEditView extends AbstractStatulView {
     const clearPrice = evt.target.value.replace(/\D/g, '');
 
     this._setState({
-      // eslint-disable-next-line camelcase
-      base_price: clearPrice
+      basePrice: clearPrice
     });
   };
 
@@ -162,8 +161,7 @@ export default class PointEditView extends AbstractStatulView {
         {
           enableTime: true,
           enableSeconds: true,
-          // eslint-disable-next-line camelcase
-          time_24hr: true,
+          'time_24hr': true,
           dateFormat: 'd/m/y H:i',
           minDate: isStartTime ? null : this.#datepickers[0].selectedDates[0],
           defaultDate: this._state[dateType],

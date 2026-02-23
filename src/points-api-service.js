@@ -13,6 +13,16 @@ export default class PointsApiService extends ApiService {
       .then(ApiService.parseResponse);
   }
 
+  get offers() {
+    return this._load({url: 'offers'})
+      .then(ApiService.parseResponse);
+  }
+
+  get destinations() {
+    return this._load({url: 'destinations'})
+      .then(ApiService.parseResponse);
+  }
+
   async udatePoint(point) {
     const response = await this._load({
       url: `points/${point.id}`,
@@ -64,7 +74,7 @@ export default class PointsApiService extends ApiService {
         }
 
         if (value instanceof Date) {
-          formattedValue = value.toISOString;
+          formattedValue = value.toISOString();
         }
 
         const formattedKey = toSnakeFromCameCase(key);
