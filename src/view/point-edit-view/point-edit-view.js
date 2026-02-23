@@ -118,7 +118,7 @@ export default class PointEditView extends AbstractStatulView {
   #priceChangeHandler = (evt) => {
     evt.preventDefault();
 
-    const clearPrice = evt.target.value.replace(/\D/g, '');
+    const clearPrice = Number(evt.target.value.replace(/\D/g, ''));
 
     this._setState({
       basePrice: clearPrice

@@ -1,6 +1,5 @@
 import PointEditView from '../view/point-edit-view/point-edit-view';
 import { UserAction, UpdateType } from '../const';
-import { nanoid } from 'nanoid';
 import { remove, render, RenderPosition } from '../framework/render';
 import { isEscKey } from '../utils/common';
 
@@ -56,7 +55,7 @@ export default class NewPointPresenter {
   #getOffers = (type) => this.#pointsModel.getOffersByType(type);
 
   #formSubmitHandler = (point) => {
-    this.#handleDataChange(UserAction.ADD_POINT, UpdateType.MINOR, {...point, id: nanoid()});
+    this.#handleDataChange(UserAction.ADD_POINT, UpdateType.MINOR, point);
 
   };
 
