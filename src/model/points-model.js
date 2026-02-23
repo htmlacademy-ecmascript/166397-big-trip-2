@@ -18,6 +18,7 @@ export default class PointsModel extends Observable {
   constructor({pointsApiService}) {
     super();
     this.#pointsApiService = pointsApiService;
+    console.log(this.#pointsApiService);
 
     // this.#pointsApiService.points.then((points) => {
     //   console.log(points);
@@ -90,6 +91,7 @@ export default class PointsModel extends Observable {
       this._notify(updateType, updatedPoint);
     } catch {
       throw new Error('Can\'t update point');
+
     }
   }
 

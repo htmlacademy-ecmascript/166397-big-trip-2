@@ -1,5 +1,4 @@
 import { createPointEditTemplate } from './point-edit-template';
-import { toISOString } from '../../utils/point';
 import AbstractStatulView from '../../framework/view/abstract-stateful-view';
 import flatpickr from 'flatpickr';
 
@@ -145,7 +144,7 @@ export default class PointEditView extends AbstractStatulView {
 
   #dateChangeHandler = ([userDate], dateType) => {
     this.updateElement({
-      [dateType]: toISOString(userDate),
+      [dateType]: userDate,
     });
   };
 
@@ -154,7 +153,7 @@ export default class PointEditView extends AbstractStatulView {
 
     dateElements.forEach((item, index) => {
       const isStartTime = item.name === 'event-start-time';
-      const dateType = isStartTime ? 'date_from' : 'date_to';
+      const dateType = isStartTime ? 'dateFrom' : 'dateTo';
 
       this.#datepickers[index] = flatpickr(
         item,
