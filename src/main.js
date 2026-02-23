@@ -26,7 +26,7 @@ const pointsModel = new PointsModel({
 const filterModel = new FilterModel();
 const sortModel = new SortModel();
 
-const tripInfo = new TripInfoView();
+const tripInfoComponent = new TripInfoView();
 
 const newPointButtonComponent = new NewPointButtonView({
   onClick: handleNewPointButtonClick,
@@ -34,7 +34,7 @@ const newPointButtonComponent = new NewPointButtonView({
 
 const boardPresenter = new BoardPresenter({
   boardContainer: tripContainerElement,
-  tripInfoContainer: tripInfo.element,
+  tripInfoContainer: tripInfoComponent.element,
   pointsModel,
   filterModel,
   sortModel,
@@ -54,9 +54,8 @@ const sortPresenter = new SortPresenter({
   pointsModel
 });
 
-render(tripInfo, tripMainElement, RenderPosition.AFTERBEGIN);
-render(new TripView(), tripInfo.element);
-render(newPointButtonComponent, tripMainElement);
+render(tripInfoComponent, tripMainElement, RenderPosition.AFTERBEGIN);
+render(new TripView(), tripInfoComponent.element);
 
 function handleNewPointFormClose() {
   newPointButtonComponent.element.disabled = false;
@@ -72,4 +71,6 @@ filterPresenter.init();
 sortPresenter.init();
 boardPresenter.init();
 // });
-pointsModel.init();
+pointsModel.init().finally(() => {
+  render(newPointButtonComponent, tripMainElement);
+});
