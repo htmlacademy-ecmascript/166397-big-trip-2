@@ -5,11 +5,11 @@ import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
 
 const BLANK_POINT = {
-  id: '0',
-  basePrice: null,
+  // id: '0',
+  basePrice: 0,
   dateFrom: new Date('2019-03-19T00:00:00.00Z'),
-  dateTo: new Date('2019-03-19T00:00:00.00Z'),
-  destination: null,
+  dateTo: new Date('2019-03-19T01:00:00.00Z'),
+  destination: 'null',
   isFavorite: false,
   offers: [],
   type: 'flight'
@@ -21,12 +21,12 @@ export default class PointEditView extends AbstractStatulView {
   #handleFormSubmit = null;
   #handleDeleteClick = null;
   #getOffers = null;
-  #isNewTask = false;
+  #isNewPoint = false;
 
   #datepickers = [];
   #form = null;
 
-  constructor({point = BLANK_POINT, destinations, getOffers, onRollupClick, onFormSubmit, onDeleteClick, isNewTask = false}) {
+  constructor({point = BLANK_POINT, destinations, getOffers, onRollupClick, onFormSubmit, onDeleteClick, isNewPoint = false}) {
     super();
     this.#getOffers = getOffers;
     this._setState(PointEditView.parsePointToState(point));
@@ -34,13 +34,13 @@ export default class PointEditView extends AbstractStatulView {
     this.#handleRollupClick = onRollupClick;
     this.#handleFormSubmit = onFormSubmit;
     this.#handleDeleteClick = onDeleteClick;
-    this.#isNewTask = isNewTask;
+    this.#isNewPoint = isNewPoint;
 
     this._restoreHandlers();
   }
 
   get template() {
-    return createPointEditTemplate(this._state, this.#destinations, this.#getOffers(this._state.type), this.#isNewTask);
+    return createPointEditTemplate(this._state, this.#destinations, this.#getOffers(this._state.type), this.#isNewPoint);
   }
 
   removeElement() {
@@ -171,11 +171,18 @@ export default class PointEditView extends AbstractStatulView {
   static parsePointToState(point) {
     return {
       ...point,
+      isDisabled: false,
+      isSaving: false,
+      isDeleting: false,
     };
   }
 
   static parseStateToPoint(state) {
     const point = {...state};
+
+    delete point.isDisabled;
+    delete point.isSaving;
+    delete point.isDeleting;
 
     return point;
   }

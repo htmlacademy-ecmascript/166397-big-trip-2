@@ -31,7 +31,7 @@ export default class NewPointPresenter {
       getOffers: this.#getOffers,
       onFormSubmit: this.#formSubmitHandler,
       onDeleteClick: this.#deleteClickHandler,
-      isNewTask: true
+      isNewPoint: true
     });
 
     render(this.#pointEditComponent, this.#pointsListContainer, RenderPosition.AFTERBEGIN);
