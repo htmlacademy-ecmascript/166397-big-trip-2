@@ -52,11 +52,17 @@ export default class NewPointPresenter {
     document.removeEventListener('keydown', this.#escKeydownHandler);
   }
 
+  setSaving() {
+    this.#pointEditComponent.updateElement({
+      isDisabled: true,
+      isSaving: true,
+    });
+  }
+
   #getOffers = (type) => this.#pointsModel.getOffersByType(type);
 
   #formSubmitHandler = (point) => {
     this.#handleDataChange(UserAction.ADD_POINT, UpdateType.MINOR, point);
-
   };
 
   #deleteClickHandler = () => {

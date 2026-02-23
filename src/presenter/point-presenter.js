@@ -72,6 +72,24 @@ export default class PointPresenter {
     remove(this.#pointEditComponent);
   }
 
+  setSaving() {
+    if (this.#mode === PointMode.EDITING) {
+      this.#pointEditComponent.updateElement({
+        isDisabled: true,
+        isSaving: true,
+      });
+    }
+  }
+
+  setDeleting() {
+    if (this.#mode === PointMode.EDITING) {
+      this.#pointEditComponent.updateElement({
+        isDisabled: true,
+        isDeleting: true,
+      });
+    }
+  }
+
   #getOffers = (type) => this.#pointsModel.getOffersByType(type);
 
   #togglePointMode() {
@@ -115,7 +133,7 @@ export default class PointPresenter {
   #handleFormSubmit = (update) => {
     const isPatchUpdate = update.type !== this.#point.type || update.destination !== this.#point.destination;
     this.#handleDataChange(UserAction.UPDATE_POINT, isPatchUpdate ? UpdateType.PATCH : UpdateType.MINOR, update);
-    this.#togglePointMode();
+    // this.#togglePointMode();
   };
 
   #handleDeleteClick = (task) => {
