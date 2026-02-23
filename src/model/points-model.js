@@ -18,7 +18,6 @@ export default class PointsModel extends Observable {
   constructor({pointsApiService}) {
     super();
     this.#pointsApiService = pointsApiService;
-    console.log(this.#pointsApiService);
 
     // this.#pointsApiService.points.then((points) => {
     //   console.log(points);
