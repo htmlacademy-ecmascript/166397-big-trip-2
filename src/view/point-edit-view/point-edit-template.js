@@ -69,7 +69,7 @@ function createRollupButtonTemplate() {
 }
 
 function createPointEditTemplate(point, destinations, currentOffers, isNewTask) {
-  const { id, base_price: basePrice, date_from: dateFrom, date_to: dateTo, destination, offers, type } = point;
+  const { id, basePrice, dateFrom, dateTo, destination, offers, type } = point;
 
   const currentDestination = getElementByKey('id', destination, destinations);
 

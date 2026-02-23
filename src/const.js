@@ -30,6 +30,7 @@ const UpdateType = {
   PATCH: 'PATCH',
   MINOR: 'MINOR',
   MAJOR: 'MAJOR',
+  INIT: 'INIT',
 };
 
 export { DESTINATION_TYPES, FilterType, SortingType, PointMode, UserAction, UpdateType };

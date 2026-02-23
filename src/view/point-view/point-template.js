@@ -19,7 +19,7 @@ function createOffersTemplate(offers, currentOffers) {
 }
 
 function createPointTemplate(point, destination, currentOffers) {
-  const { base_price: basePrice, date_from: dateFrom, date_to: dateTo, is_favorite: isFavorite, offers, type } = point;
+  const { basePrice, dateFrom, dateTo, isFavorite, offers, type } = point;
 
   const date = humanizePointDate(dateFrom);
   const humanizedDateFrom = humanizePointTime(dateFrom);
@@ -33,7 +33,7 @@ function createPointTemplate(point, destination, currentOffers) {
   return (`
     <li class="trip-events__item">
       <div class="event">
-        <time class="event__date" datetime="${dateFrom}">${date}</time>
+        <time class="event__date" datetime="${dateFrom.toISOString()}">${date}</time>
         <div class="event__type">
           <img class="event__type-icon" width="42" height="42" src="img/icons/${type}.png" alt="${type} icon">
         </div>

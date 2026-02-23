@@ -7,6 +7,10 @@ import SortModel from './model/sort-model';
 import FilterPresenter from './presenter/filter-presenter';
 import SortPresenter from './presenter/sort-presenter';
 import NewPointButtonView from './view/new-point-button-view';
+import PointsApiService from './points-api-service';
+
+const AUTHORIZATION = 'Basic f1dsfdFFF323S';
+const END_POINT = 'https://22.objects.htmlacademy.pro/big-trip';
 
 import { render, RenderPosition } from './framework/render';
 
@@ -16,11 +20,13 @@ const filtersContainerElement = headerElement.querySelector('.trip-controls__fil
 const tripContainerElement = mainElement.querySelector('.trip-events');
 const tripMainElement = headerElement.querySelector('.trip-main');
 
-const pointsModel = new PointsModel();
+const pointsModel = new PointsModel({
+  pointsApiService: new PointsApiService(END_POINT, AUTHORIZATION)
+});
 const filterModel = new FilterModel();
 const sortModel = new SortModel();
 
-const tripInfo = new TripInfoView();
+const tripInfoComponent = new TripInfoView();
 
 const newPointButtonComponent = new NewPointButtonView({
   onClick: handleNewPointButtonClick,
@@ -28,7 +34,7 @@ const newPointButtonComponent = new NewPointButtonView({
 
 const boardPresenter = new BoardPresenter({
   boardContainer: tripContainerElement,
-  tripInfoContainer: tripInfo.element,
+  tripInfoContainer: tripInfoComponent.element,
   pointsModel,
   filterModel,
   sortModel,
@@ -48,9 +54,8 @@ const sortPresenter = new SortPresenter({
   pointsModel
 });
 
-render(tripInfo, tripMainElement, RenderPosition.AFTERBEGIN);
-render(new TripView(), tripInfo.element);
-render(newPointButtonComponent, tripMainElement);
+render(tripInfoComponent, tripMainElement, RenderPosition.AFTERBEGIN);
+render(new TripView(), tripInfoComponent.element);
 
 function handleNewPointFormClose() {
   newPointButtonComponent.element.disabled = false;
@@ -61,8 +66,10 @@ function handleNewPointButtonClick() {
   newPointButtonComponent.element.disabled = true;
 }
 
+filterPresenter.init();
+sortPresenter.init();
+boardPresenter.init();
+
 pointsModel.init().finally(() => {
-  filterPresenter.init();
-  sortPresenter.init();
-  boardPresenter.init();
+  render(newPointButtonComponent, tripMainElement);
 });

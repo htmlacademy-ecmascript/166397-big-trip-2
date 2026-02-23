@@ -1,5 +1,4 @@
 import { createPointEditTemplate } from './point-edit-template';
-import { toISOString } from '../../utils/point';
 import AbstractStatulView from '../../framework/view/abstract-stateful-view';
 import flatpickr from 'flatpickr';
 
@@ -7,15 +6,11 @@ import 'flatpickr/dist/flatpickr.min.css';
 
 const BLANK_POINT = {
   id: '0',
-  // eslint-disable-next-line camelcase
-  base_price: null,
-  // eslint-disable-next-line camelcase
-  date_from: '2019-03-19T00:00:00.00Z',
-  // eslint-disable-next-line camelcase
-  date_to: '2019-03-19T00:00:00.00Z',
+  basePrice: null,
+  dateFrom: new Date('2019-03-19T00:00:00.00Z'),
+  dateTo: new Date('2019-03-19T00:00:00.00Z'),
   destination: null,
-  // eslint-disable-next-line camelcase
-  is_favorite: false,
+  isFavorite: false,
   offers: [],
   type: 'flight'
 };
@@ -126,8 +121,7 @@ export default class PointEditView extends AbstractStatulView {
     const clearPrice = evt.target.value.replace(/\D/g, '');
 
     this._setState({
-      // eslint-disable-next-line camelcase
-      base_price: clearPrice
+      basePrice: clearPrice
     });
   };
 
@@ -146,7 +140,7 @@ export default class PointEditView extends AbstractStatulView {
 
   #dateChangeHandler = ([userDate], dateType) => {
     this.updateElement({
-      [dateType]: toISOString(userDate),
+      [dateType]: userDate,
     });
   };
 
@@ -155,15 +149,14 @@ export default class PointEditView extends AbstractStatulView {
 
     dateElements.forEach((item, index) => {
       const isStartTime = item.name === 'event-start-time';
-      const dateType = isStartTime ? 'date_from' : 'date_to';
+      const dateType = isStartTime ? 'dateFrom' : 'dateTo';
 
       this.#datepickers[index] = flatpickr(
         item,
         {
           enableTime: true,
           enableSeconds: true,
-          // eslint-disable-next-line camelcase
-          time_24hr: true,
+          'time_24hr': true,
           dateFormat: 'd/m/y H:i',
           minDate: isStartTime ? null : this.#datepickers[0].selectedDates[0],
           defaultDate: this._state[dateType],

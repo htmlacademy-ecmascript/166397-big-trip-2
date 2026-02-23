@@ -123,7 +123,6 @@ export default class PointPresenter {
   };
 
   #handleFavoriteClick = () => {
-    // eslint-disable-next-line camelcase
-    this.#handleDataChange(UserAction.UPDATE_POINT, UpdateType.PATCH, {...this.#point, is_favorite: !this.#point.is_favorite});
+    this.#handleDataChange(UserAction.UPDATE_POINT, UpdateType.PATCH, {...this.#point, isFavorite: !this.#point.isFavorite});
   };
 }
