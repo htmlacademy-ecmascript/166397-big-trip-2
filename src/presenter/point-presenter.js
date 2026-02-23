@@ -90,6 +90,23 @@ export default class PointPresenter {
     }
   }
 
+  setAborting() {
+    if (this.#mode === PointMode.VIEW) {
+      this.#pointComponent.shake();
+      return;
+    }
+
+    const resetFormState = () => {
+      this.#pointEditComponent.updateElement({
+        isDisabled: false,
+        isSaving: false,
+        isDeleting: false,
+      });
+    };
+
+    this.#pointEditComponent.shake(resetFormState);
+  }
+
   #getOffers = (type) => this.#pointsModel.getOffersByType(type);
 
   #togglePointMode() {

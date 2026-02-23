@@ -59,6 +59,18 @@ export default class NewPointPresenter {
     });
   }
 
+  setAborting() {
+    const resetFormState = () => {
+      this.#pointEditComponent.updateElement({
+        isDisabled: false,
+        isSaving: false,
+        isDeleting: false,
+      });
+    };
+
+    this.#pointEditComponent.shake(resetFormState);
+  }
+
   #getOffers = (type) => this.#pointsModel.getOffersByType(type);
 
   #formSubmitHandler = (point) => {
