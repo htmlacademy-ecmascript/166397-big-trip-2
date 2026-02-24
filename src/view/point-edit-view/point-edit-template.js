@@ -2,20 +2,30 @@ import { humanizePointDateAndTime } from '../../utils/point';
 import { getElementByKey, capitalizeString } from '../../utils/common';
 import { DESTINATION_TYPES } from '../../const';
 
-function createEventTypesTemplate(activeType, pointId) {
+const SaveButtonText = {
+  IDLE: 'Save',
+  SENDING: 'Saving...'
+};
+
+const DeleteButtonText = {
+  IDLE: 'Delete',
+  SENDING: 'Deleting...'
+};
+
+function createEventTypesTemplate(activeType, pointId, isDisabled) {
   return DESTINATION_TYPES.map((type) => {
     const capitalizedType = capitalizeString(type);
     const checked = type === activeType ? 'checked' : '';
 
     return `
       <div class="event__type-item">
-        <input id="event-type-${type}-${pointId}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${type}" ${checked}>
+        <input id="event-type-${type}-${pointId}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${type}" ${checked} ${isDisabled ? 'disabled' : ''}>
         <label class="event__type-label  event__type-label--${type}" for="event-type-${type}-${pointId}">${capitalizedType}</label>
       </div>`;
   }).join('');
 }
 
-function createOffersTemplate(offers, currentOffers) {
+function createOffersTemplate(offers, currentOffers, isDisabled) {
   return `
     <section class="event__section  event__section--offers">
       <h3 class="event__section-title  event__section-title--offers">Offers</h3>
@@ -25,7 +35,7 @@ function createOffersTemplate(offers, currentOffers) {
 
     return `
         <div class="event__offer-selector">
-          <input class="event__offer-checkbox  visually-hidden" id="event-offer-luggage-${id}" type="checkbox" name="event-offer-luggage" ${checked}>
+          <input class="event__offer-checkbox  visually-hidden" id="event-offer-luggage-${id}" type="checkbox" name="event-offer-luggage" ${checked} ${isDisabled ? 'disabled' : ''}>
           <label class="event__offer-label" for="event-offer-luggage-${id}"">
             <span class="event__offer-title">${title}</span>
             &plus;&euro;&nbsp;
@@ -60,32 +70,37 @@ function createDestinationTemplate(description, picturesTemplate) {
   `;
 }
 
-function createRollupButtonTemplate() {
+function createRollupButtonTemplate(isDisabled) {
   return `
-    <button class="event__rollup-btn" type="button">
+    <button class="event__rollup-btn" type="button" ${isDisabled ? 'disabled' : ''}>
       <span class="visually-hidden">Open event</span>
     </button>
   `;
 }
 
-function createPointEditTemplate(point, destinations, currentOffers, isNewTask) {
-  const { id, basePrice, dateFrom, dateTo, destination, offers, type } = point;
+function createPointEditTemplate(point, destinations, currentOffers, isNewPoint) {
+  const { id, basePrice, dateFrom, dateTo, destination, offers, type, isDisabled, isSaving, isDeleting } = point;
 
   const currentDestination = getElementByKey('id', destination, destinations);
 
   const pointId = id || 0;
   const currentType = type || 'flight';
-  const price = basePrice || '';
+  const price = basePrice || 0;
   const humanizedDateFrom = humanizePointDateAndTime(dateFrom);
   const humanizedDateTo = humanizePointDateAndTime(dateTo);
   const {name, description, pictures} = currentDestination || {};
 
-  const offersTemplate = currentOffers?.length ? createOffersTemplate(offers, currentOffers) : '';
+  const offersTemplate = currentOffers?.length ? createOffersTemplate(offers, currentOffers, isDisabled) : '';
   const picturesTemplate = pictures?.length ? createPicturesTemplate(pictures) : '';
   const destinationsTemplate = destinations?.length ? createDestinationsTemplate(destinations) : '';
-  const eventTypesTemplate = DESTINATION_TYPES?.length ? createEventTypesTemplate(currentType, pointId) : '';
-  const destinationTemplate = destination ? createDestinationTemplate(description, picturesTemplate) : '';
-  const rollupButtonTemplate = !isNewTask ? createRollupButtonTemplate() : '';
+  const eventTypesTemplate = DESTINATION_TYPES?.length ? createEventTypesTemplate(currentType, pointId, isDisabled) : '';
+  const destinationTemplate = currentDestination ? createDestinationTemplate(description, picturesTemplate) : '';
+  const rollupButtonTemplate = !isNewPoint ? createRollupButtonTemplate(isDisabled) : '';
+  let deletingText = isDeleting ? DeleteButtonText.SENDING : DeleteButtonText.IDLE;
+
+  if (isNewPoint) {
+    deletingText = 'Cancel';
+  }
 
   return (`
     <li class="trip-events__item">
@@ -96,7 +111,7 @@ function createPointEditTemplate(point, destinations, currentOffers, isNewTask) 
               <span class="visually-hidden">Choose event type</span>
               <img class="event__type-icon" width="17" height="17" src="img/icons/${currentType}.png" alt="${currentType} icon">
             </label>
-            <input class="event__type-toggle  visually-hidden" id="event-type-toggle-${pointId}" type="checkbox">
+            <input class="event__type-toggle  visually-hidden" id="event-type-toggle-${pointId}" type="checkbox" ${isDisabled ? 'disabled' : ''}>
 
             <div class="event__type-list">
               <fieldset class="event__type-group">
@@ -111,7 +126,7 @@ function createPointEditTemplate(point, destinations, currentOffers, isNewTask) 
             <label class="event__label  event__type-output" for="event-destination-${pointId}">
               ${currentType}
             </label>
-            <input class="event__input  event__input--destination" id="event-destination-${pointId}" type="text" name="event-destination" value="${name || ''}" list="destination-list-${pointId}">
+            <input class="event__input  event__input--destination" id="event-destination-${pointId}" type="text" name="event-destination" value="${name || ''}" list="destination-list-${pointId}" ${isDisabled ? 'disabled' : ''}>
             <datalist id="destination-list-${pointId}">
               ${destinationsTemplate}
             </datalist>
@@ -119,10 +134,10 @@ function createPointEditTemplate(point, destinations, currentOffers, isNewTask) 
 
           <div class="event__field-group  event__field-group--time">
             <label class="visually-hidden" for="event-start-time-${pointId}">From</label>
-            <input class="event__input  event__input--time" id="event-start-time-${pointId}" type="text" name="event-start-time" value="${humanizedDateFrom}">
+            <input class="event__input  event__input--time" id="event-start-time-${pointId}" type="text" name="event-start-time" value="${humanizedDateFrom}" ${isDisabled ? 'disabled' : ''}>
             &mdash;
             <label class="visually-hidden" for="event-end-time-${pointId}">To</label>
-            <input class="event__input  event__input--time" id="event-end-time-${pointId}" type="text" name="event-end-time" value="${humanizedDateTo}">
+            <input class="event__input  event__input--time" id="event-end-time-${pointId}" type="text" name="event-end-time" value="${humanizedDateTo}" ${isDisabled ? 'disabled' : ''}>
           </div>
 
           <div class="event__field-group  event__field-group--price">
@@ -130,11 +145,11 @@ function createPointEditTemplate(point, destinations, currentOffers, isNewTask) 
               <span class="visually-hidden">Price</span>
               &euro;
             </label>
-            <input class="event__input  event__input--price" id="event-price-${pointId}" type="number" name="event-price" value="${price}">
+            <input class="event__input  event__input--price" id="event-price-${pointId}" type="number" name="event-price" value="${price}" ${isDisabled ? 'disabled' : ''}>
           </div>
 
-          <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-          <button class="event__reset-btn" type="reset">Delete</button>
+          <button class="event__save-btn  btn  btn--blue" type="submit" ${isDisabled ? 'disabled' : ''}>${isSaving ? SaveButtonText.SENDING : SaveButtonText.IDLE}</button>
+          <button class="event__reset-btn" type="reset" ${isDisabled ? 'disabled' : ''}>${deletingText}</button>
           ${rollupButtonTemplate}
         </header>
         <section class="event__details">

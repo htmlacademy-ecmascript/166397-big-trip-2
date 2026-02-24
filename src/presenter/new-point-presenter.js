@@ -1,6 +1,5 @@
 import PointEditView from '../view/point-edit-view/point-edit-view';
 import { UserAction, UpdateType } from '../const';
-import { nanoid } from 'nanoid';
 import { remove, render, RenderPosition } from '../framework/render';
 import { isEscKey } from '../utils/common';
 
@@ -32,7 +31,7 @@ export default class NewPointPresenter {
       getOffers: this.#getOffers,
       onFormSubmit: this.#formSubmitHandler,
       onDeleteClick: this.#deleteClickHandler,
-      isNewTask: true
+      isNewPoint: true
     });
 
     render(this.#pointEditComponent, this.#pointsListContainer, RenderPosition.AFTERBEGIN);
@@ -53,11 +52,29 @@ export default class NewPointPresenter {
     document.removeEventListener('keydown', this.#escKeydownHandler);
   }
 
+  setSaving() {
+    this.#pointEditComponent.updateElement({
+      isDisabled: true,
+      isSaving: true,
+    });
+  }
+
+  setAborting() {
+    const resetFormState = () => {
+      this.#pointEditComponent.updateElement({
+        isDisabled: false,
+        isSaving: false,
+        isDeleting: false,
+      });
+    };
+
+    this.#pointEditComponent.shake(resetFormState);
+  }
+
   #getOffers = (type) => this.#pointsModel.getOffersByType(type);
 
   #formSubmitHandler = (point) => {
-    this.#handleDataChange(UserAction.ADD_POINT, UpdateType.MINOR, {...point, id: nanoid()});
-
+    this.#handleDataChange(UserAction.ADD_POINT, UpdateType.MINOR, point);
   };
 
   #deleteClickHandler = () => {
