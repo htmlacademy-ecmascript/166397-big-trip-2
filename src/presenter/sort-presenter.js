@@ -1,5 +1,5 @@
 import { sorting } from '../utils/sorting';
-import { remove, render, replace } from '../framework/render';
+import { remove, render, replace, RenderPosition } from '../framework/render';
 import SortView from '../view/sort-view/sort-view';
 import { UpdateType } from '../const';
 
@@ -8,6 +8,7 @@ export default class SortPresenter {
   #sortModel = null;
   #pointsModel = null;
   #sortComponent = null;
+  #currentUpdateType = UpdateType.FAIL;
 
   constructor({sortContainer, sortModel, pointsModel}) {
     this.#sortContainer = sortContainer;
@@ -34,6 +35,10 @@ export default class SortPresenter {
   }
 
   init() {
+    if (UpdateType.FAIL) {
+      return;
+    }
+
     const prevSortComponent = this.#sortComponent;
 
     this.#sortComponent = new SortView({
@@ -43,7 +48,7 @@ export default class SortPresenter {
     });
 
     if (prevSortComponent === null) {
-      render(this.#sortComponent, this.#sortContainer);
+      render(this.#sortComponent, this.#sortContainer, RenderPosition.AFTERBEGIN);
       return;
     }
 
@@ -51,7 +56,9 @@ export default class SortPresenter {
     remove(prevSortComponent);
   }
 
-  #handleModelEvent = () => {
+  #handleModelEvent = (updateType) => {
+    this.#currentUpdateType = updateType;
+
     this.init();
   };
 

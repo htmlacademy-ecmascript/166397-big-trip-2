@@ -26,6 +26,12 @@ export default class PointsModel extends Observable {
     return this.#offers;
   }
 
+  get trip() {
+    const trip = this.#points.map((point) => this.getDestinationById(point.destination).name);
+
+    return trip.length <= 3 ? trip.join(' &mdash; ') : `${trip[0]} &mdash; ... &mdash; ${trip[trip.length - 1]}`;
+  }
+
   async init() {
     try {
       const points = await this.#pointsApiService.points;
@@ -34,13 +40,15 @@ export default class PointsModel extends Observable {
       this.#destinations = await this.#pointsApiService.destinations;
       this.#offers = await this.#pointsApiService.offers;
 
+      this._notify(UpdateType.INIT);
+
     } catch {
       this.#points = [];
       this.#destinations = [];
       this.#offers = [];
-    }
 
-    this._notify(UpdateType.INIT);
+      this._notify(UpdateType.FAIL);
+    }
   }
 
   getDestinationById(id) {

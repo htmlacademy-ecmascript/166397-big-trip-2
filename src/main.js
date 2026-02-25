@@ -8,11 +8,12 @@ import FilterPresenter from './presenter/filter-presenter';
 import SortPresenter from './presenter/sort-presenter';
 import NewPointButtonView from './view/new-point-button-view';
 import PointsApiService from './points-api-service';
+import { render, RenderPosition } from './framework/render';
+import TripInfoPresenter from './presenter/trip-info-presenter';
 
 const AUTHORIZATION = 'Basic f1dsfdFFF323S';
 const END_POINT = 'https://22.objects.htmlacademy.pro/big-trip';
 
-import { render, RenderPosition } from './framework/render';
 
 const headerElement = document.querySelector('.page-header');
 const mainElement = document.querySelector('.page-main');
@@ -26,19 +27,24 @@ const pointsModel = new PointsModel({
 const filterModel = new FilterModel();
 const sortModel = new SortModel();
 
-const tripInfoComponent = new TripInfoView();
+// const tripInfoComponent = new TripInfoView();
 
-const newPointButtonComponent = new NewPointButtonView({
-  onClick: handleNewPointButtonClick,
+// const newPointButtonComponent = new NewPointButtonView({
+//   onClick: handleNewPointButtonClick,
+// });
+
+const tripInfoPresenter = new TripInfoPresenter({
+  tripMainContainer: tripMainElement,
+  // tripInfoComponent: tripInfoComponent,
+  pointsModel,
 });
 
 const boardPresenter = new BoardPresenter({
   boardContainer: tripContainerElement,
-  tripInfoContainer: tripInfoComponent.element,
+  tripMainContainer: tripMainElement,
   pointsModel,
   filterModel,
   sortModel,
-  onNewPointDestroy: handleNewPointFormClose
 });
 
 const filterPresenter = new FilterPresenter({
@@ -54,22 +60,23 @@ const sortPresenter = new SortPresenter({
   pointsModel
 });
 
-render(tripInfoComponent, tripMainElement, RenderPosition.AFTERBEGIN);
-render(new TripView(), tripInfoComponent.element);
+// render(tripInfoComponent, tripMainElement, RenderPosition.AFTERBEGIN);
+// render(new TripView(), tripInfoComponent.element);
 
-function handleNewPointFormClose() {
-  newPointButtonComponent.element.disabled = false;
-}
+// function handleNewPointFormClose() {
+//   newPointButtonComponent.element.disabled = false;
+// }
 
-function handleNewPointButtonClick() {
-  boardPresenter.createPoint();
-  newPointButtonComponent.element.disabled = true;
-}
+// function handleNewPointButtonClick() {
+//   boardPresenter.createPoint();
+//   newPointButtonComponent.element.disabled = true;
+// }
 
+tripInfoPresenter.init();
 filterPresenter.init();
 sortPresenter.init();
 boardPresenter.init();
 
 pointsModel.init().finally(() => {
-  render(newPointButtonComponent, tripMainElement);
+  // render(newPointButtonComponent, tripMainElement);
 });

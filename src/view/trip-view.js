@@ -17,8 +17,9 @@ export default class TripView extends AbstractView {
 
   constructor({title, dates} = {}) {
     super();
-    this.#title = title || DEFAULT_TITLE;
+    this.#title = title || '';
     this.#dates = dates || DEFAULT_DATES;
+
   }
 
   get template() {

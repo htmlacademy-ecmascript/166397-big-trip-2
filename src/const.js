@@ -31,6 +31,7 @@ const UpdateType = {
   MINOR: 'MINOR',
   MAJOR: 'MAJOR',
   INIT: 'INIT',
+  FAIL: 'FAIL',
 };
 
 export { DESTINATION_TYPES, FilterType, SortingType, PointMode, UserAction, UpdateType };
