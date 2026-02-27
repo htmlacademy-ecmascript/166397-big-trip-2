@@ -6,7 +6,6 @@ import { isEscKey } from '../utils/common';
 export default class NewPointPresenter {
   #boardContainer = null;
   #pointsListComponent = null;
-  #emptyListComponent = null;
   #handleDataChange = null;
   #handleDestroy = null;
   #pointsModel = null;
@@ -14,10 +13,9 @@ export default class NewPointPresenter {
   #pointEditComponent = null;
   #getEmptyComponent = null;
 
-  constructor({boardContainer, pointsListComponent, emptyListComponent, onDataChange, onDestroy, getEmptyComponent, pointsModel}) {
+  constructor({boardContainer, pointsListComponent, onDataChange, onDestroy, getEmptyComponent, pointsModel}) {
     this.#boardContainer = boardContainer;
     this.#pointsListComponent = pointsListComponent;
-    this.#emptyListComponent = emptyListComponent;
     this.#handleDataChange = onDataChange;
     this.#handleDestroy = onDestroy;
     this.#getEmptyComponent = getEmptyComponent;

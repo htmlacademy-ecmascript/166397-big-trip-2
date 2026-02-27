@@ -27,11 +27,8 @@ export default class BoardPresenter {
   #pointPresenters = new Map();
   #currentSortType = SortingType.DAY;
   #currentFilterType = FilterType.EVERYTHING;
-
-  // #sortComponent = null;
   #emptyListComponent = null;
   #failLoadComponent = null;
-  // #costComponent = null;
   #filterModel = null;
   #sortModel = null;
   #newPointPresenter = null;
@@ -54,7 +51,6 @@ export default class BoardPresenter {
     this.#newPointPresenter = new NewPointPresenter({
       boardContainer: this.#boardContainer,
       pointsListComponent: this.#listComponent,
-      emptyListComponent: this.#emptyListComponent,
       onDataChange: this.#handleViewAction,
       onDestroy: this.#handleNewPointFormClose,
       getEmptyComponent: this.#getEmptyComponent,
@@ -95,11 +91,6 @@ export default class BoardPresenter {
   }
 
   #getEmptyComponent = () => this.#emptyListComponent;
-
-  // #renderCost() {
-  //   this.#costComponent = new CostView();
-  //   render(this.#costComponent, this.#tripInfoContainer);
-  // }
 
   #renderLoading() {
     render(this.#loadingComponent, this.#boardContainer);
@@ -143,8 +134,6 @@ export default class BoardPresenter {
   }
 
   #renderPointsList() {
-
-
     if (!this.#isLoadingSuccessful) {
       this.#renderFailLoad();
       return;
@@ -165,7 +154,6 @@ export default class BoardPresenter {
     this.#newPointPresenter.destroy();
     this.#clearPointsList();
 
-    // remove(this.#sortComponent);
     remove(this.#loadingComponent);
 
     if (this.#failLoadComponent) {
@@ -175,7 +163,7 @@ export default class BoardPresenter {
     if (this.#emptyListComponent) {
       remove(this.#emptyListComponent);
     }
-    // remove(this.#costComponent);
+
     this.#currentFilterType = this.#filterModel.filter;
   }
 
@@ -185,9 +173,7 @@ export default class BoardPresenter {
       return;
     }
 
-    // this.#renderCost();
     this.#renderPointsList();
-
   }
 
   #handleNewPointButtonClick = () => {

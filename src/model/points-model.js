@@ -90,12 +90,6 @@ export default class PointsModel extends Observable {
       const response = await this.#pointsApiService.updatePoint(update);
       const updatedPoint = this.#adaptToClient(response);
 
-      // this.#points = [
-      //   ...this.#points.slice(0, index),
-      //   updatedPoint,
-      //   ...this.#points.slice(index + 1),
-      // ];
-
       const points = await this.#pointsApiService.points;
 
       this.#points = points.map(this.#adaptToClient);
@@ -110,11 +104,6 @@ export default class PointsModel extends Observable {
     try {
       const response = await this.#pointsApiService.addPoint(update);
       const newPoint = this.#adaptToClient(response);
-
-      // this.#points = [
-      //   newPoint,
-      //   ...this.#points,
-      // ];
 
       const points = await this.#pointsApiService.points;
 
