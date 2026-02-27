@@ -1,10 +1,12 @@
 import AbstractView from '../framework/view/abstract-view';
-const DEFAULT_COST = 1230;
+import { localeSum } from '../utils/common';
 
 function createCostTemplate(cost) {
+  const localCost = localeSum(cost);
+
   return (
     `<p class="trip-info__cost">
-      Total: €&nbsp;<span class="trip-info__cost-value">${cost}</span>
+      Total: €&nbsp;<span class="trip-info__cost-value">${localCost}</span>
     </p>`
   );
 }
@@ -14,7 +16,7 @@ export default class CostView extends AbstractView {
 
   constructor({cost} = {}) {
     super();
-    this.#cost = cost || DEFAULT_COST;
+    this.#cost = cost;
   }
 
   get template() {

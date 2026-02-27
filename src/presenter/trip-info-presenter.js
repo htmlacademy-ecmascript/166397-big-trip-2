@@ -22,13 +22,16 @@ export default class TripInfoPresenter {
   init() {
     this.#tripInfoComponent = new TripInfoView();
     this.#tripInfoContainer = this.#tripInfoComponent.element;
-    render(this.#tripInfoComponent, this.#tripMainContainer, RenderPosition.AFTERBEGIN);
     this.#renderTripInfo();
   }
 
   #renderTripInfo() {
-    this.#renderTripInfoMain();
-    this.#renderCost();
+    if (this.#pointsModel.points.length) {
+      render(this.#tripInfoComponent, this.#tripMainContainer, RenderPosition.AFTERBEGIN);
+      this.#renderTripInfoMain();
+      this.#renderCost();
+    }
+
   }
 
   #renderTripInfoMain() {
@@ -41,7 +44,9 @@ export default class TripInfoPresenter {
   }
 
   #renderCost() {
-    this.#costComponent = new CostView();
+    this.#costComponent = new CostView({
+      cost: this.#pointsModel.cost,
+    });
     render(this.#costComponent, this.#tripInfoContainer);
   }
 

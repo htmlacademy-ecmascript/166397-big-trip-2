@@ -11,7 +11,7 @@ import PointsApiService from './points-api-service';
 import { render, RenderPosition } from './framework/render';
 import TripInfoPresenter from './presenter/trip-info-presenter';
 
-const AUTHORIZATION = 'Basic f1dsfdFFF323S';
+const AUTHORIZATION = 'Basic f1dsfdFFF323S1';
 const END_POINT = 'https://22.objects.htmlacademy.pro/big-trip';
 
 

@@ -1,11 +1,12 @@
 import AbstractView from '../framework/view/abstract-view';
-import { humanizeTripDates } from '../utils/point';
+import { humanizeTripDates } from '../utils/common';
 
 const MAX_TITLE_LENGTH = 3;
 
 function createTripTemplate(trip, dateStart, dateEnd) {
   const title = trip.length <= MAX_TITLE_LENGTH ? trip.join(' &mdash; ') : `${trip[0]} &mdash; ... &mdash; ${trip[trip.length - 1]}`;
   const datesTemplate = dateStart && dateEnd ? humanizeTripDates(dateStart, dateEnd) : '';
+  console.log(dateStart, dateEnd);
 
   return (
     `<div class="trip-info__main">

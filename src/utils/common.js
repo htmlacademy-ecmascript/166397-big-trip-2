@@ -1,6 +1,8 @@
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 
+const DATE_REVERSE_FORMAT = 'D MMM';
+const DATE_ALT_FORMAT = 'D';
 dayjs.extend(duration);
 
 function getRandomArrayElement(elements) {
@@ -40,4 +42,23 @@ function toSnakeFromCameCase(value) {
   return value.replace(/[A-Z]/gu, (match) => `_${match.toLowerCase()}`);
 }
 
-export { getRandomArrayElement, getElementByKey, capitalizeString, getDuration, isEscKey, toCamelFromSnakeCase, toSnakeFromCameCase };
+function humanizeTripDates(startTime, endTime) {
+  const formattedStartTime = dayjs(startTime);
+  const formattedEndTime = dayjs(endTime);
+
+  let dateStart = formattedStartTime.format(DATE_REVERSE_FORMAT);
+
+  if (formattedStartTime.get('month') === formattedEndTime.get('month') && formattedStartTime.get('year') === formattedEndTime.get('year')) {
+    dateStart = formattedStartTime.format(DATE_ALT_FORMAT);
+  }
+
+  return `${dateStart} — ${formattedEndTime.format(DATE_REVERSE_FORMAT)}`;
+}
+
+function localeSum(sum) {
+  const ruFormatter = new Intl.NumberFormat('ru-RU');
+
+  return ruFormatter.format(sum);
+}
+
+export { getRandomArrayElement, getElementByKey, capitalizeString, getDuration, isEscKey, toCamelFromSnakeCase, toSnakeFromCameCase, humanizeTripDates, localeSum };

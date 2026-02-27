@@ -1,5 +1,6 @@
 import { getElementByKey, toCamelFromSnakeCase } from '../utils/common';
-import { UpdateType } from '../const';
+import { UpdateType, SortingType } from '../const';
+import { sorting } from '../utils/sorting';
 import Observable from '../framework/observable';
 import dayjs from 'dayjs';
 
@@ -15,7 +16,7 @@ export default class PointsModel extends Observable {
   }
 
   get points() {
-    return this.#points;
+    return sorting[SortingType.DAY](this.#points);
   }
 
   get destinations() {
@@ -27,15 +28,28 @@ export default class PointsModel extends Observable {
   }
 
   get trip() {
-    return this.#points.map((point) => this.getDestinationById(point.destination).name);
+
+    return this.points.map((point) => this.getDestinationById(point.destination).name);
   }
 
   get dateStart() {
-    return this.#points[0]?.dateFrom;
+
+    return this.points[0]?.dateFrom;
   }
 
   get dateEnd() {
-    return this.#points[this.#points.length - 1]?.dateTo;
+    return this.points[this.#points.length - 1]?.dateTo;
+  }
+
+  get cost() {
+    return this.points.reduce((total, point) => {
+      const checkedOffers = point.offers;
+      const offers = this.getOffersByType(point.type);
+
+      const offersCost = offers.reduce((finalPrise, offer) => checkedOffers.includes(offer.id) ? finalPrise + offer.price : finalPrise, 0);
+
+      return total + point.basePrice + offersCost;
+    }, 0);
   }
 
   async init() {
