@@ -148,9 +148,12 @@ export default class PointPresenter {
   };
 
   #handleFormSubmit = (update) => {
-    const isPatchUpdate = update.type !== this.#point.type || update.destination !== this.#point.destination;
-    this.#handleDataChange(UserAction.UPDATE_POINT, isPatchUpdate ? UpdateType.PATCH : UpdateType.MINOR, update);
-    // this.#togglePointMode();
+    const isPatchUpdate = update.type !== this.#point.type;
+    this.#handleDataChange(UserAction.UPDATE_POINT, isPatchUpdate ? UpdateType.PATCH : UpdateType.MAJOR, update);
+
+    if (isPatchUpdate) {
+      this.#togglePointMode();
+    }
   };
 
   #handleDeleteClick = (task) => {

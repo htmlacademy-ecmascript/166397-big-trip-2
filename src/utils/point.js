@@ -2,18 +2,32 @@ import dayjs from 'dayjs';
 import isBetween from 'dayjs/plugin/isBetween';
 import { getDuration } from './common';
 
-const DATE_FORMATE = 'MMM D';
-const TIME_FORMATE = 'HH:mm';
-const DATE_AND_TIME_FORMATE = 'DD/MM/YY HH:mm';
+const DATE_FORMAT = 'MMM D';
+const DATE_ALT_FORMAT = 'D';
+const TIME_FORMAT = 'HH:mm';
+const DATE_AND_TIME_FORMAT = 'DD/MM/YY HH:mm';
 
 dayjs.extend(isBetween);
 
 function humanizePointDate(pointDate) {
-  return pointDate ? dayjs(pointDate).format(DATE_FORMATE) : '';
+  return pointDate ? dayjs(pointDate).format(DATE_FORMAT) : '';
 }
 
 function humanizePointTime(pointTime) {
-  return pointTime ? dayjs(pointTime).format(TIME_FORMATE) : '';
+  return pointTime ? dayjs(pointTime).format(TIME_FORMAT) : '';
+}
+
+function humanizeTripDates(startTime, endTime) {
+  const formattedStartTime = dayjs(startTime);
+  const formattedEndTime = dayjs(endTime);
+
+  let result = `${formattedStartTime.format(DATE_FORMAT)} — ${formattedEndTime.format(DATE_FORMAT)}`;
+
+  if (formattedStartTime.get('month') === formattedEndTime.get('month') && formattedStartTime.get('year') === formattedEndTime.get('year')) {
+    result = `${formattedStartTime.format(DATE_ALT_FORMAT)} — ${formattedEndTime.format(DATE_FORMAT)}`;
+  }
+
+  return result;
 }
 
 function padNumber(value) {
@@ -38,7 +52,7 @@ function humanizeDuration(dateFrom, dateTo) {
 }
 
 function humanizePointDateAndTime(pointDate) {
-  return pointDate ? dayjs(pointDate).format(DATE_AND_TIME_FORMATE) : '';
+  return pointDate ? dayjs(pointDate).format(DATE_AND_TIME_FORMAT) : '';
 }
 
 function isFuturePoint(dateFrom) {
@@ -53,4 +67,4 @@ function isPastPoint(dateTo) {
   return dateTo && dayjs(dateTo).isBefore(dayjs(), 'D');
 }
 
-export { humanizePointDate, humanizePointTime, getDuration, humanizeDuration, humanizePointDateAndTime, isFuturePoint, isPresentPoint, isPastPoint, toISOString };
+export { humanizePointDate, humanizePointTime, humanizeDuration, humanizePointDateAndTime, isFuturePoint, isPresentPoint, isPastPoint, toISOString, humanizeTripDates };

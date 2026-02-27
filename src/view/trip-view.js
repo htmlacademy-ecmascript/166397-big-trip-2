@@ -1,28 +1,33 @@
 import AbstractView from '../framework/view/abstract-view';
-const DEFAULT_TITLE = 'Amsterdam &mdash; Chamonix &mdash; Geneva';
-const DEFAULT_DATES = '18&nbsp;&mdash;&nbsp;20 Mar';
+import { humanizeTripDates } from '../utils/point';
 
-function createTripTemplate(title, dates) {
+const MAX_TITLE_LENGTH = 3;
+
+function createTripTemplate(trip, dateStart, dateEnd) {
+  const title = trip.length <= MAX_TITLE_LENGTH ? trip.join(' &mdash; ') : `${trip[0]} &mdash; ... &mdash; ${trip[trip.length - 1]}`;
+  const datesTemplate = dateStart && dateEnd ? humanizeTripDates(dateStart, dateEnd) : '';
+
   return (
     `<div class="trip-info__main">
       <h1 class="trip-info__title">${title}</h1>
-      <p class="trip-info__dates">${dates}</p>
+      <p class="trip-info__dates">${datesTemplate}</p>
     </div>`
   );
 }
 
 export default class TripView extends AbstractView {
-  #title = null;
-  #dates = null;
+  #trip = [];
+  #dateStart = null;
+  #dateEnd = null;
 
-  constructor({title, dates} = {}) {
+  constructor({trip, dateStart, dateEnd} = {}) {
     super();
-    this.#title = title || '';
-    this.#dates = dates || DEFAULT_DATES;
-
+    this.#trip = trip;
+    this.#dateStart = dateStart;
+    this.#dateEnd = dateEnd;
   }
 
   get template() {
-    return createTripTemplate(this.#title, this.#dates);
+    return createTripTemplate(this.#trip, this.#dateStart, this.#dateEnd);
   }
 }

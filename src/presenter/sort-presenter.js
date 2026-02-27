@@ -35,7 +35,12 @@ export default class SortPresenter {
   }
 
   init() {
-    if (UpdateType.FAIL) {
+    if (this.#currentUpdateType === UpdateType.FAIL) {
+      return;
+    }
+
+    if (!this.#pointsModel.points.length) {
+      remove(this.#sortComponent);
       return;
     }
 
@@ -47,7 +52,7 @@ export default class SortPresenter {
       onSortChange: this.#handleSortTypeChange
     });
 
-    if (prevSortComponent === null) {
+    if (!prevSortComponent) {
       render(this.#sortComponent, this.#sortContainer, RenderPosition.AFTERBEGIN);
       return;
     }

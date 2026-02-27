@@ -72,11 +72,12 @@ const sortPresenter = new SortPresenter({
 //   newPointButtonComponent.element.disabled = true;
 // }
 
-tripInfoPresenter.init();
-filterPresenter.init();
-sortPresenter.init();
-boardPresenter.init();
 
 pointsModel.init().finally(() => {
   // render(newPointButtonComponent, tripMainElement);
+  // boardPresenter.init();
 });
+boardPresenter.init();
+tripInfoPresenter.init();
+filterPresenter.init();
+sortPresenter.init();

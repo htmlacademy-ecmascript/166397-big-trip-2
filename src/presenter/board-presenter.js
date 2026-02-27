@@ -27,7 +27,8 @@ export default class BoardPresenter {
   #pointPresenters = new Map();
   #currentSortType = SortingType.DAY;
   #currentFilterType = FilterType.EVERYTHING;
-  #sortComponent = null;
+
+  // #sortComponent = null;
   #emptyListComponent = null;
   #failLoadComponent = null;
   // #costComponent = null;
@@ -51,10 +52,13 @@ export default class BoardPresenter {
     this.#sortModel = sortModel;
 
     this.#newPointPresenter = new NewPointPresenter({
-      pointsListContainer: this.#listComponent.element,
+      boardContainer: this.#boardContainer,
+      pointsListComponent: this.#listComponent,
+      emptyListComponent: this.#emptyListComponent,
       onDataChange: this.#handleViewAction,
       onDestroy: this.#handleNewPointFormClose,
-      pointsModel
+      getEmptyComponent: this.#getEmptyComponent,
+      pointsModel: this.#pointsModel
     });
 
     this.#pointsModel.addObserver(this.#handleModelEvent);
@@ -77,9 +81,11 @@ export default class BoardPresenter {
     this.#newPointButtonComponent = new NewPointButtonView({
       onClick: this.#handleNewPointButtonClick,
     });
+
     render(this.#newPointButtonComponent, this.#tripMainContainer);
 
     this.#renderBoard();
+
   }
 
   createPoint() {
@@ -87,6 +93,8 @@ export default class BoardPresenter {
     this.#filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
     this.#newPointPresenter.init();
   }
+
+  #getEmptyComponent = () => this.#emptyListComponent;
 
   // #renderCost() {
   //   this.#costComponent = new CostView();
@@ -135,6 +143,8 @@ export default class BoardPresenter {
   }
 
   #renderPointsList() {
+
+
     if (!this.#isLoadingSuccessful) {
       this.#renderFailLoad();
       return;
@@ -142,10 +152,12 @@ export default class BoardPresenter {
 
     if (!this.points.length) {
       this.#renderEmptyList();
+
       return;
     }
 
     render(this.#listComponent, this.#boardContainer);
+
     this.#renderPoints();
   }
 
@@ -153,7 +165,7 @@ export default class BoardPresenter {
     this.#newPointPresenter.destroy();
     this.#clearPointsList();
 
-    remove(this.#sortComponent);
+    // remove(this.#sortComponent);
     remove(this.#loadingComponent);
 
     if (this.#failLoadComponent) {
@@ -175,6 +187,7 @@ export default class BoardPresenter {
 
     // this.#renderCost();
     this.#renderPointsList();
+
   }
 
   #handleNewPointButtonClick = () => {

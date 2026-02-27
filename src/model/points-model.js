@@ -27,9 +27,15 @@ export default class PointsModel extends Observable {
   }
 
   get trip() {
-    const trip = this.#points.map((point) => this.getDestinationById(point.destination).name);
+    return this.#points.map((point) => this.getDestinationById(point.destination).name);
+  }
 
-    return trip.length <= 3 ? trip.join(' &mdash; ') : `${trip[0]} &mdash; ... &mdash; ${trip[trip.length - 1]}`;
+  get dateStart() {
+    return this.#points[0]?.dateFrom;
+  }
+
+  get dateEnd() {
+    return this.#points[this.#points.length - 1]?.dateTo;
   }
 
   async init() {
@@ -70,11 +76,15 @@ export default class PointsModel extends Observable {
       const response = await this.#pointsApiService.updatePoint(update);
       const updatedPoint = this.#adaptToClient(response);
 
-      this.#points = [
-        ...this.#points.slice(0, index),
-        updatedPoint,
-        ...this.#points.slice(index + 1),
-      ];
+      // this.#points = [
+      //   ...this.#points.slice(0, index),
+      //   updatedPoint,
+      //   ...this.#points.slice(index + 1),
+      // ];
+
+      const points = await this.#pointsApiService.points;
+
+      this.#points = points.map(this.#adaptToClient);
 
       this._notify(updateType, updatedPoint);
     } catch {
@@ -87,12 +97,16 @@ export default class PointsModel extends Observable {
       const response = await this.#pointsApiService.addPoint(update);
       const newPoint = this.#adaptToClient(response);
 
-      this.#points = [
-        newPoint,
-        ...this.#points,
-      ];
+      // this.#points = [
+      //   newPoint,
+      //   ...this.#points,
+      // ];
 
-      this._notify(updateType, update);
+      const points = await this.#pointsApiService.points;
+
+      this.#points = points.map(this.#adaptToClient);
+
+      this._notify(updateType, newPoint);
     } catch {
       throw new Error('Can\'t add point');
     }
