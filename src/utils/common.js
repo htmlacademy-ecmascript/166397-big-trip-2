@@ -38,7 +38,7 @@ function toCamelFromSnakeCase(value) {
   return words.join('');
 }
 
-function toSnakeFromCameCase(value) {
+function toSnakeFromCamelCase(value) {
   return value.replace(/[A-Z]/gu, (match) => `_${match.toLowerCase()}`);
 }
 
@@ -61,4 +61,4 @@ function localeSum(sum) {
   return ruFormatter.format(sum);
 }
 
-export { getRandomArrayElement, getElementByKey, capitalizeString, getDuration, isEscKey, toCamelFromSnakeCase, toSnakeFromCameCase, humanizeTripDates, localeSum };
+export { getRandomArrayElement, getElementByKey, capitalizeString, getDuration, isEscKey, toCamelFromSnakeCase, toSnakeFromCamelCase, humanizeTripDates, localeSum };

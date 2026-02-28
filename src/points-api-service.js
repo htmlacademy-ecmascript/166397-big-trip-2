@@ -1,5 +1,5 @@
 import ApiService from './framework/api-service';
-import { toSnakeFromCameCase } from './utils/common';
+import { toSnakeFromCamelCase } from './utils/common';
 import he from 'he';
 
 const Method = {
@@ -72,7 +72,7 @@ export default class PointsApiService extends ApiService {
     Object.entries(point).map(
       ([key, value]) => {
         let formattedValue = value instanceof Object ? structuredClone(value) : value;
-        const formattedKey = toSnakeFromCameCase(key);
+        const formattedKey = toSnakeFromCamelCase(key);
 
         if (typeof value === 'string') {
           formattedValue = he.encode(value);

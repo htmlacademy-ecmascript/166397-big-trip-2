@@ -22,7 +22,7 @@ function padNumber(value) {
 
 function humanizeDuration(dateFrom, dateTo) {
   const formattedDuration = getDuration(dateFrom, dateTo);
-  const days = formattedDuration.days() ? formattedDuration.days() : Math.floor(formattedDuration.asDays());
+  const days = Math.floor(formattedDuration.asDays()) >= 1 ? Math.floor(formattedDuration.asDays()) : 0;
   const hours = formattedDuration.hours();
   const minutes = formattedDuration.minutes();
 

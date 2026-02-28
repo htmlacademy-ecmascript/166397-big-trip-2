@@ -94,7 +94,7 @@ function createPointEditTemplate(point, destinations, currentOffers, isNewPoint)
   const picturesTemplate = pictures?.length ? createPicturesTemplate(pictures) : '';
   const destinationsTemplate = destinations?.length ? createDestinationsTemplate(destinations) : '';
   const eventTypesTemplate = DESTINATION_TYPES?.length ? createEventTypesTemplate(currentType, pointId, isDisabled) : '';
-  const destinationTemplate = currentDestination ? createDestinationTemplate(description, picturesTemplate) : '';
+  const destinationTemplate = description && pictures ? createDestinationTemplate(description, picturesTemplate) : '';
   const rollupButtonTemplate = !isNewPoint ? createRollupButtonTemplate(isDisabled) : '';
   let deletingText = isDeleting ? DeleteButtonText.SENDING : DeleteButtonText.IDLE;
 
