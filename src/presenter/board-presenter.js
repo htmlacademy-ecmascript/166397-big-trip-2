@@ -81,7 +81,6 @@ export default class BoardPresenter {
     render(this.#newPointButtonComponent, this.#tripMainContainer);
 
     this.#renderBoard();
-
   }
 
   createPoint() {

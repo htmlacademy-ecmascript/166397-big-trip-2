@@ -5,10 +5,9 @@ import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
 
 const BLANK_POINT = {
-  // id: '0',
   basePrice: 0,
-  dateFrom: new Date('2019-03-19T00:00:00.00Z'),
-  dateTo: new Date('2019-03-19T01:00:00.00Z'),
+  dateFrom: null,
+  dateTo: null,
   destination: 'null',
   isFavorite: false,
   offers: [],

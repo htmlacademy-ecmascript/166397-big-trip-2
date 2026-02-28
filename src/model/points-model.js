@@ -28,12 +28,10 @@ export default class PointsModel extends Observable {
   }
 
   get trip() {
-
     return this.points.map((point) => this.getDestinationById(point.destination).name);
   }
 
   get dateStart() {
-
     return this.points[0]?.dateFrom;
   }
 
@@ -125,7 +123,9 @@ export default class PointsModel extends Observable {
     try {
       await this.#pointsApiService.deletePoint(update);
 
-      this.#points = this.#points.filter((point) => point.id !== update.id);
+      const points = await this.#pointsApiService.points;
+
+      this.#points = points.map(this.#adaptToClient);
 
       this._notify(updateType, update);
     } catch {
