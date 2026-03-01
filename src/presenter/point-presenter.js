@@ -145,8 +145,8 @@ export default class PointPresenter {
     this.#handleDataChange(UserAction.UPDATE_POINT, isPatchUpdate ? UpdateType.PATCH : UpdateType.MAJOR, update);
   };
 
-  #handleDeleteClick = (task) => {
-    this.#handleDataChange(UserAction.DELETE_POINT, UpdateType.MINOR, task);
+  #handleDeleteClick = (point) => {
+    this.#handleDataChange(UserAction.DELETE_POINT, UpdateType.MINOR, point);
   };
 
   #handleFavoriteClick = () => {
