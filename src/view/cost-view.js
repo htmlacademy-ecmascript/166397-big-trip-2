@@ -1,12 +1,9 @@
 import AbstractView from '../framework/view/abstract-view';
-import { localeSum } from '../utils/common';
 
 function createCostTemplate(cost) {
-  const localCost = localeSum(cost);
-
   return (
     `<p class="trip-info__cost">
-      Total: €&nbsp;<span class="trip-info__cost-value">${localCost}</span>
+      Total: €&nbsp;<span class="trip-info__cost-value">${cost}</span>
     </p>`
   );
 }

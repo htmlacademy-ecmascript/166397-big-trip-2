@@ -21,8 +21,8 @@ export default class PointEditView extends AbstractStatulView {
   #handleDeleteClick = null;
   #getOffers = null;
   #isNewPoint = false;
-
   #datepickers = [];
+  #isCalendarOpen = false;
   #form = null;
 
   constructor({point = BLANK_POINT, destinations, getOffers, onRollupClick, onFormSubmit, onDeleteClick, isNewPoint = false}) {
@@ -74,6 +74,14 @@ export default class PointEditView extends AbstractStatulView {
     this.#form.querySelector('.event__reset-btn').addEventListener('click', this.#deleteClickHandler);
 
     this.#setDatepickers();
+  }
+
+  checkCalendarOpen = () => this.#isCalendarOpen;
+
+  closeDatepickers() {
+    this.#datepickers.forEach((datepicker) => {
+      datepicker.close();
+    });
   }
 
   #rollupClickHandler = (evt) => {
@@ -159,7 +167,16 @@ export default class PointEditView extends AbstractStatulView {
           dateFormat: 'd/m/y H:i',
           minDate: isStartTime ? null : this.#datepickers[0].selectedDates[0],
           defaultDate: this._state[dateType],
-          onClose: (date) => this.#dateChangeHandler(date, dateType),
+          onOpen: () => {
+            this.#isCalendarOpen = true;
+          },
+          onClose: (date) => {
+            this.#dateChangeHandler(date, dateType);
+
+            setTimeout(() => {
+              this.#isCalendarOpen = false;
+            }, 100);
+          },
         },
       );
     });

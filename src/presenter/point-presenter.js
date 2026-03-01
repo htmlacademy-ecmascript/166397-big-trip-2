@@ -134,6 +134,13 @@ export default class PointPresenter {
   #documentKeydownHandler = (evt) => {
     if (isEscKey(evt)) {
       evt.preventDefault();
+      if (this.#pointEditComponent.checkCalendarOpen()) {
+        console.log(this.#pointEditComponent.checkCalendarOpen());
+        this.#pointEditComponent.closeDatepickers();
+        return;
+      }
+
+
       this.#pointEditComponent.reset(this.#point);
       this.#togglePointMode();
     }
@@ -148,7 +155,9 @@ export default class PointPresenter {
   };
 
   #handleFormSubmit = (update) => {
-    const isPatchUpdate = update.type !== this.#point.type;
+    // console.log(update);
+    // const isPatchUpdate = update.type !== this.#point.type;
+    const isPatchUpdate = update.basePrice === this.#point.basePrice && update.dateFrom === this.#point.dateFrom && update.dateTo === this.#point.dateTo && update.destination === this.#point.destination && JSON.stringify(update.offers) === JSON.stringify(this.#point.offers);
     this.#handleDataChange(UserAction.UPDATE_POINT, isPatchUpdate ? UpdateType.PATCH : UpdateType.MAJOR, update);
 
     if (isPatchUpdate) {

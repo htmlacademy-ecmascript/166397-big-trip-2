@@ -55,10 +55,4 @@ function humanizeTripDates(startTime, endTime) {
   return `${dateStart} — ${formattedEndTime.format(DATE_REVERSE_FORMAT)}`;
 }
 
-function localeSum(sum) {
-  const ruFormatter = new Intl.NumberFormat('ru-RU');
-
-  return ruFormatter.format(sum);
-}
-
-export { getRandomArrayElement, getElementByKey, capitalizeString, getDuration, isEscKey, toCamelFromSnakeCase, toSnakeFromCamelCase, humanizeTripDates, localeSum };
+export { getRandomArrayElement, getElementByKey, capitalizeString, getDuration, isEscKey, toCamelFromSnakeCase, toSnakeFromCamelCase, humanizeTripDates };
