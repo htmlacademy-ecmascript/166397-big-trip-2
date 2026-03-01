@@ -2,7 +2,6 @@ import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 
 const DATE_REVERSE_FORMAT = 'D MMM';
-const DATE_ALT_FORMAT = 'D';
 dayjs.extend(duration);
 
 function getRandomArrayElement(elements) {
@@ -46,13 +45,7 @@ function humanizeTripDates(startTime, endTime) {
   const formattedStartTime = dayjs(startTime);
   const formattedEndTime = dayjs(endTime);
 
-  let dateStart = formattedStartTime.format(DATE_REVERSE_FORMAT);
-
-  if (formattedStartTime.get('month') === formattedEndTime.get('month') && formattedStartTime.get('year') === formattedEndTime.get('year')) {
-    dateStart = formattedStartTime.format(DATE_ALT_FORMAT);
-  }
-
-  return `${dateStart} — ${formattedEndTime.format(DATE_REVERSE_FORMAT)}`;
+  return `${formattedStartTime.format(DATE_REVERSE_FORMAT)} — ${formattedEndTime.format(DATE_REVERSE_FORMAT)}`;
 }
 
 export { getRandomArrayElement, getElementByKey, capitalizeString, getDuration, isEscKey, toCamelFromSnakeCase, toSnakeFromCamelCase, humanizeTripDates };

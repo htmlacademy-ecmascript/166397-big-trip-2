@@ -1,6 +1,5 @@
 
 import ListView from '../view/list-view';
-// import CostView from '../view/cost-view';
 import ListEmptyView from '../view/list-empty-view';
 import LoadingView from '../view/loading-view';
 import { render, remove } from '../framework/render';
@@ -25,8 +24,6 @@ export default class BoardPresenter {
   #tripMainContainer = null;
   #pointsModel = null;
   #pointPresenters = new Map();
-  #currentSortType = SortingType.DAY;
-  #currentFilterType = FilterType.EVERYTHING;
   #emptyListComponent = null;
   #failLoadComponent = null;
   #filterModel = null;
@@ -41,7 +38,6 @@ export default class BoardPresenter {
   });
 
   constructor({boardContainer, tripMainContainer, pointsModel, filterModel, sortModel}) {
-
     this.#boardContainer = boardContainer;
     this.#tripMainContainer = tripMainContainer;
     this.#pointsModel = pointsModel;
@@ -63,12 +59,12 @@ export default class BoardPresenter {
   }
 
   get points() {
-    this.#currentFilterType = this.#filterModel.filter;
-    this.#currentSortType = this.#sortModel.sort;
-    const points = [...this.#pointsModel.points];
-    const filteredPoints = filter[this.#currentFilterType](points);
+    const currentFilterType = this.#filterModel.filter;
+    const currentSortType = this.#sortModel.sort;
+    const points = structuredClone(this.#pointsModel.points);
+    const filteredPoints = filter[currentFilterType](points);
 
-    const sortingPoints = sorting[this.#currentSortType](filteredPoints);
+    const sortingPoints = sorting[currentSortType](filteredPoints);
 
     return sortingPoints;
   }
@@ -96,7 +92,7 @@ export default class BoardPresenter {
   }
 
   #renderEmptyList() {
-    this.#emptyListComponent = new ListEmptyView({filterType: this.#currentFilterType});
+    this.#emptyListComponent = new ListEmptyView({filterType: this.#filterModel.filter});
     render(this.#emptyListComponent, this.#boardContainer);
   }
 
@@ -162,8 +158,6 @@ export default class BoardPresenter {
     if (this.#emptyListComponent) {
       remove(this.#emptyListComponent);
     }
-
-    this.#currentFilterType = this.#filterModel.filter;
   }
 
   #renderBoard() {
@@ -177,11 +171,11 @@ export default class BoardPresenter {
 
   #handleNewPointButtonClick = () => {
     this.createPoint();
-    this.#newPointButtonComponent.element.disabled = true;
+    this.#newPointButtonComponent.setDisabled(true);
   };
 
   #handleNewPointFormClose = () => {
-    this.#newPointButtonComponent.element.disabled = false;
+    this.#newPointButtonComponent.setDisabled(false);
   };
 
   #handleViewAction = async (actionType, updateType, update) => {
@@ -225,12 +219,10 @@ export default class BoardPresenter {
   #handleModelEvent = (updateType, data) => {
     switch (updateType) {
       case UpdateType.PATCH:
+        this.#pointPresenters.get(data.id).resetMode();
         this.#pointPresenters.get(data.id).init(data);
         break;
       case UpdateType.MINOR:
-        this.#clearBoard();
-        this.#renderBoard();
-        break;
       case UpdateType.MAJOR:
         this.#clearBoard();
         this.#renderBoard();
@@ -240,14 +232,14 @@ export default class BoardPresenter {
         this.#isLoadingSuccessful = true;
         remove(this.#loadingComponent);
         this.#renderBoard();
-        this.#newPointButtonComponent.element.disabled = false;
+        this.#newPointButtonComponent.setDisabled(false);
         break;
       case UpdateType.FAIL:
         this.#isLoading = false;
         this.#isLoadingSuccessful = false;
         remove(this.#loadingComponent);
         this.#renderBoard();
-        this.#newPointButtonComponent.element.disabled = true;
+        this.#newPointButtonComponent.setDisabled(true);
         break;
     }
   };

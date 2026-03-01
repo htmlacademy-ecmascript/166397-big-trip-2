@@ -26,12 +26,12 @@ export default class TripInfoPresenter {
   }
 
   #renderTripInfo() {
+    render(this.#tripInfoComponent, this.#tripMainContainer, RenderPosition.AFTERBEGIN);
+    this.#renderTripInfoMain();
+
     if (this.#pointsModel.points.length) {
-      render(this.#tripInfoComponent, this.#tripMainContainer, RenderPosition.AFTERBEGIN);
-      this.#renderTripInfoMain();
       this.#renderCost();
     }
-
   }
 
   #renderTripInfoMain() {
@@ -56,22 +56,11 @@ export default class TripInfoPresenter {
   }
 
   #handleModelEvent = (updateType) => {
-    switch (updateType) {
-      // case UpdateType.PATCH:
-
-      //   break;
-      case UpdateType.MINOR:
-        this.#clearTripInfo();
-        this.#renderTripInfo();
-        break;
-      case UpdateType.MAJOR:
-        this.#clearTripInfo();
-        this.#renderTripInfo();
-        break;
-      case UpdateType.INIT:
-        this.#clearTripInfo();
-        this.#renderTripInfo();
-        break;
+    if (updateType === UpdateType.PATCH) {
+      return;
     }
+
+    this.#clearTripInfo();
+    this.#renderTripInfo();
   };
 }

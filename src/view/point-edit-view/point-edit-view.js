@@ -22,8 +22,7 @@ export default class PointEditView extends AbstractStatulView {
   #getOffers = null;
   #isNewPoint = false;
   #datepickers = [];
-  #isCalendarOpen = false;
-  #form = null;
+  #formElement = null;
 
   constructor({point = BLANK_POINT, destinations, getOffers, onRollupClick, onFormSubmit, onDeleteClick, isNewPoint = false}) {
     super();
@@ -58,30 +57,46 @@ export default class PointEditView extends AbstractStatulView {
   }
 
   _restoreHandlers() {
-    this.#form = this.element.querySelector('form');
+    this.#formElement = this.element.querySelector('form');
 
-    const rollupButton = this.#form.querySelector('.event__rollup-btn');
+    const rollupButton = this.#formElement.querySelector('.event__rollup-btn');
 
     if (rollupButton) {
       rollupButton.addEventListener('click', this.#rollupClickHandler);
     }
 
-    this.#form.addEventListener('submit', this.#formSubmitHandler);
-    this.#form.querySelector('.event__type-list').addEventListener('change', this.#typeChangeHandler);
-    this.#form.querySelector('.event__input--destination').addEventListener('change', this.#destinationChangeHandler);
-    this.#form.querySelector('.event__input--price').addEventListener('change', this.#priceChangeHandler);
-    this.#form.addEventListener('change', this.#offersChangeHandler);
-    this.#form.querySelector('.event__reset-btn').addEventListener('click', this.#deleteClickHandler);
+    this.#formElement.addEventListener('submit', this.#formSubmitHandler);
+    this.#formElement.querySelector('.event__type-list').addEventListener('change', this.#typeChangeHandler);
+    this.#formElement.querySelector('.event__input--destination').addEventListener('change', this.#destinationChangeHandler);
+    this.#formElement.querySelector('.event__input--price').addEventListener('change', this.#priceChangeHandler);
+    this.#formElement.addEventListener('change', this.#offersChangeHandler);
+    this.#formElement.querySelector('.event__reset-btn').addEventListener('click', this.#deleteClickHandler);
 
     this.#setDatepickers();
   }
 
-  checkCalendarOpen = () => this.#isCalendarOpen;
+  #setDatepickers() {
+    const dateElements = this.element.querySelectorAll('.event__input--time');
 
-  closeDatepickers() {
-    this.#datepickers.forEach((datepicker) => {
-      datepicker.close();
+    dateElements.forEach((item, index) => {
+      const isStartTime = item.name === 'event-start-time';
+      const dateType = isStartTime ? 'dateFrom' : 'dateTo';
+
+      this.#datepickers[index] = flatpickr(
+        item,
+        {
+          enableTime: true,
+          enableSeconds: true,
+          'time_24hr': true,
+          dateFormat: 'd/m/y H:i',
+          minDate: isStartTime ? null : this.#datepickers[0].selectedDates[0],
+          defaultDate: this._state[dateType],
+          onClose: (date) => this.#dateChangeHandler(date, dateType)
+        },
+      );
     });
+
+    this.#datepickers[0].set('maxDate', this.#datepickers[1].selectedDates[0]);
   }
 
   #rollupClickHandler = (evt) => {
@@ -135,7 +150,7 @@ export default class PointEditView extends AbstractStatulView {
   #offersChangeHandler = (evt) => {
     if (evt.target.matches('.event__offer-checkbox')) {
       evt.preventDefault();
-      const offersCheckboxes = Array.from(this.#form['event-offer-luggage']);
+      const offersCheckboxes = Array.from(this.#formElement['event-offer-luggage']);
 
       const checkedOffers = offersCheckboxes.filter((item) => item.checked).map((item) => item.id.replace('event-offer-luggage-', ''));
 
@@ -151,38 +166,6 @@ export default class PointEditView extends AbstractStatulView {
     });
   };
 
-  #setDatepickers() {
-    const dateElements = this.element.querySelectorAll('.event__input--time');
-
-    dateElements.forEach((item, index) => {
-      const isStartTime = item.name === 'event-start-time';
-      const dateType = isStartTime ? 'dateFrom' : 'dateTo';
-
-      this.#datepickers[index] = flatpickr(
-        item,
-        {
-          enableTime: true,
-          enableSeconds: true,
-          'time_24hr': true,
-          dateFormat: 'd/m/y H:i',
-          minDate: isStartTime ? null : this.#datepickers[0].selectedDates[0],
-          defaultDate: this._state[dateType],
-          onOpen: () => {
-            this.#isCalendarOpen = true;
-          },
-          onClose: (date) => {
-            this.#dateChangeHandler(date, dateType);
-
-            setTimeout(() => {
-              this.#isCalendarOpen = false;
-            }, 100);
-          },
-        },
-      );
-    });
-
-    this.#datepickers[0].set('maxDate', this.#datepickers[1].selectedDates[0]);
-  }
 
   static parsePointToState(point) {
     return {

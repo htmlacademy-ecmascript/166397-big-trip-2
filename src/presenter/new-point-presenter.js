@@ -32,7 +32,7 @@ export default class NewPointPresenter {
       render(this.#pointsListComponent, this.#boardContainer);
     }
 
-    this.#destinations = [...this.#pointsModel.destinations];
+    this.#destinations = structuredClone(this.#pointsModel.destinations);
 
     this.#pointEditComponent = new PointEditView({
       destinations: this.#destinations,

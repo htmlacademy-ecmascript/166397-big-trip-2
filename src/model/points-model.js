@@ -50,6 +50,14 @@ export default class PointsModel extends Observable {
     }, 0);
   }
 
+  getDestinationById(id) {
+    return getElementByKey('id', id, this.#destinations);
+  }
+
+  getOffersByType(type) {
+    return getElementByKey('type', type, this.#offers)?.offers;
+  }
+
   async init() {
     try {
       const points = await this.#pointsApiService.points;
@@ -69,14 +77,6 @@ export default class PointsModel extends Observable {
     }
   }
 
-  getDestinationById(id) {
-    return getElementByKey('id', id, this.#destinations);
-  }
-
-  getOffersByType(type) {
-    return getElementByKey('type', type, this.#offers)?.offers;
-  }
-
   async updatePoint(updateType, update) {
     const index = this.#points.findIndex((point) => point.id === update.id);
 
@@ -88,9 +88,11 @@ export default class PointsModel extends Observable {
       const response = await this.#pointsApiService.updatePoint(update);
       const updatedPoint = this.#adaptToClient(response);
 
-      const points = await this.#pointsApiService.points;
-
-      this.#points = points.map(this.#adaptToClient);
+      this.#points = [
+        ...this.#points.slice(0, index),
+        updatedPoint,
+        ...this.#points.slice(index + 1),
+      ];
 
       this._notify(updateType, updatedPoint);
     } catch {
@@ -103,9 +105,7 @@ export default class PointsModel extends Observable {
       const response = await this.#pointsApiService.addPoint(update);
       const newPoint = this.#adaptToClient(response);
 
-      const points = await this.#pointsApiService.points;
-
-      this.#points = points.map(this.#adaptToClient);
+      this.#points = [newPoint, ...this.#points];
 
       this._notify(updateType, newPoint);
     } catch {
@@ -123,11 +123,12 @@ export default class PointsModel extends Observable {
     try {
       await this.#pointsApiService.deletePoint(update);
 
-      const points = await this.#pointsApiService.points;
+      this.#points = [
+        ...this.#points.slice(0, index),
+        ...this.#points.slice(index + 1),
+      ];
 
-      this.#points = points.map(this.#adaptToClient);
-
-      this._notify(updateType, update);
+      this._notify(updateType);
     } catch {
       throw new Error('Can\'t delete point');
     }

@@ -10,7 +10,6 @@ import TripInfoPresenter from './presenter/trip-info-presenter';
 const AUTHORIZATION = 'Basic f1dsfdFFF323S1';
 const END_POINT = 'https://22.objects.htmlacademy.pro/big-trip';
 
-
 const headerElement = document.querySelector('.page-header');
 const mainElement = document.querySelector('.page-main');
 const filtersContainerElement = headerElement.querySelector('.trip-controls__filters');
