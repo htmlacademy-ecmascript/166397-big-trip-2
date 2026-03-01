@@ -70,9 +70,9 @@ function createDestinationTemplate(description, picturesTemplate) {
   `;
 }
 
-function createRollupButtonTemplate(isDisabled) {
+function createRollupButtonTemplate() {
   return `
-    <button class="event__rollup-btn" type="button" ${isDisabled ? 'disabled' : ''}>
+    <button class="event__rollup-btn" type="button">
       <span class="visually-hidden">Open event</span>
     </button>
   `;
@@ -149,7 +149,7 @@ function createPointEditTemplate(point, destinations, currentOffers, isNewPoint)
           </div>
 
           <button class="event__save-btn  btn  btn--blue" type="submit" ${isDisabled ? 'disabled' : ''}>${isSaving ? SaveButtonText.SENDING : SaveButtonText.IDLE}</button>
-          <button class="event__reset-btn" type="reset" ${isDisabled ? 'disabled' : ''}>${deletingText}</button>
+          <button class="event__reset-btn" type="reset">${deletingText}</button>
           ${rollupButtonTemplate}
         </header>
         <section class="event__details">

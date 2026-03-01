@@ -150,7 +150,7 @@ export default class PointEditView extends AbstractStatulView {
   #offersChangeHandler = (evt) => {
     if (evt.target.matches('.event__offer-checkbox')) {
       evt.preventDefault();
-      const offersCheckboxes = Array.from(this.#formElement['event-offer-luggage']);
+      const offersCheckboxes = Array.from(this.#formElement.querySelectorAll('[name=event-offer-luggage]'));
 
       const checkedOffers = offersCheckboxes.filter((item) => item.checked).map((item) => item.id.replace('event-offer-luggage-', ''));
 
@@ -165,7 +165,6 @@ export default class PointEditView extends AbstractStatulView {
       [dateType]: userDate,
     });
   };
-
 
   static parsePointToState(point) {
     return {
