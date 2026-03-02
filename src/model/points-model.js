@@ -44,7 +44,7 @@ export default class PointsModel extends Observable {
       const checkedOffers = point.offers;
       const offers = this.getOffersByType(point.type);
 
-      const offersCost = offers.reduce((finalPrise, offer) => checkedOffers.includes(offer.id) ? finalPrise + offer.price : finalPrise, 0);
+      const offersCost = checkedOffers.length ? offers.reduce((finalPrise, offer) => checkedOffers.includes(offer.id) ? finalPrise + offer.price : finalPrise, 0) : 0;
 
       return total + point.basePrice + offersCost;
     }, 0);
