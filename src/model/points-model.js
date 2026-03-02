@@ -1,5 +1,6 @@
 import { getElementByKey, toCamelFromSnakeCase } from '../utils/common';
-import { UpdateType } from '../const';
+import { UpdateType, SortingType } from '../const';
+import { sorting } from '../utils/sorting';
 import Observable from '../framework/observable';
 import dayjs from 'dayjs';
 
@@ -15,7 +16,7 @@ export default class PointsModel extends Observable {
   }
 
   get points() {
-    return this.#points;
+    return sorting[SortingType.DAY](this.#points);
   }
 
   get destinations() {
@@ -26,21 +27,27 @@ export default class PointsModel extends Observable {
     return this.#offers;
   }
 
-  async init() {
-    try {
-      const points = await this.#pointsApiService.points;
+  get trip() {
+    return this.points.map((point) => this.getDestinationById(point.destination).name);
+  }
 
-      this.#points = points.map(this.#adaptToClient);
-      this.#destinations = await this.#pointsApiService.destinations;
-      this.#offers = await this.#pointsApiService.offers;
+  get dateStart() {
+    return this.points[0]?.dateFrom;
+  }
 
-    } catch {
-      this.#points = [];
-      this.#destinations = [];
-      this.#offers = [];
-    }
+  get dateEnd() {
+    return this.points[this.#points.length - 1]?.dateTo;
+  }
 
-    this._notify(UpdateType.INIT);
+  get cost() {
+    return this.points.reduce((total, point) => {
+      const checkedOffers = point.offers;
+      const offers = this.getOffersByType(point.type);
+
+      const offersCost = checkedOffers.length ? offers.reduce((finalPrise, offer) => checkedOffers.includes(offer.id) ? finalPrise + offer.price : finalPrise, 0) : 0;
+
+      return total + point.basePrice + offersCost;
+    }, 0);
   }
 
   getDestinationById(id) {
@@ -49,6 +56,25 @@ export default class PointsModel extends Observable {
 
   getOffersByType(type) {
     return getElementByKey('type', type, this.#offers)?.offers;
+  }
+
+  async init() {
+    try {
+      const points = await this.#pointsApiService.points;
+
+      this.#points = points.map(this.#adaptToClient);
+      this.#destinations = await this.#pointsApiService.destinations;
+      this.#offers = await this.#pointsApiService.offers;
+
+      this._notify(UpdateType.INIT);
+
+    } catch {
+      this.#points = [];
+      this.#destinations = [];
+      this.#offers = [];
+
+      this._notify(UpdateType.FAIL);
+    }
   }
 
   async updatePoint(updateType, update) {
@@ -79,12 +105,9 @@ export default class PointsModel extends Observable {
       const response = await this.#pointsApiService.addPoint(update);
       const newPoint = this.#adaptToClient(response);
 
-      this.#points = [
-        newPoint,
-        ...this.#points,
-      ];
+      this.#points = [newPoint, ...this.#points];
 
-      this._notify(updateType, update);
+      this._notify(updateType, newPoint);
     } catch {
       throw new Error('Can\'t add point');
     }
@@ -100,9 +123,12 @@ export default class PointsModel extends Observable {
     try {
       await this.#pointsApiService.deletePoint(update);
 
-      this.#points = this.#points.filter((point) => point.id !== update.id);
+      this.#points = [
+        ...this.#points.slice(0, index),
+        ...this.#points.slice(index + 1),
+      ];
 
-      this._notify(updateType, update);
+      this._notify(updateType);
     } catch {
       throw new Error('Can\'t delete point');
     }

@@ -1,6 +1,7 @@
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 
+const DATE_REVERSE_FORMAT = 'D MMM';
 dayjs.extend(duration);
 
 function getRandomArrayElement(elements) {
@@ -36,8 +37,15 @@ function toCamelFromSnakeCase(value) {
   return words.join('');
 }
 
-function toSnakeFromCameCase(value) {
+function toSnakeFromCamelCase(value) {
   return value.replace(/[A-Z]/gu, (match) => `_${match.toLowerCase()}`);
 }
 
-export { getRandomArrayElement, getElementByKey, capitalizeString, getDuration, isEscKey, toCamelFromSnakeCase, toSnakeFromCameCase };
+function humanizeTripDates(startTime, endTime) {
+  const formattedStartTime = dayjs(startTime);
+  const formattedEndTime = dayjs(endTime);
+
+  return `${formattedStartTime.format(DATE_REVERSE_FORMAT)} — ${formattedEndTime.format(DATE_REVERSE_FORMAT)}`;
+}
+
+export { getRandomArrayElement, getElementByKey, capitalizeString, getDuration, isEscKey, toCamelFromSnakeCase, toSnakeFromCamelCase, humanizeTripDates };

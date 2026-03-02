@@ -1,5 +1,4 @@
 import AbstractView from '../framework/view/abstract-view';
-const DEFAULT_COST = 1230;
 
 function createCostTemplate(cost) {
   return (
@@ -14,7 +13,7 @@ export default class CostView extends AbstractView {
 
   constructor({cost} = {}) {
     super();
-    this.#cost = cost || DEFAULT_COST;
+    this.#cost = cost;
   }
 
   get template() {

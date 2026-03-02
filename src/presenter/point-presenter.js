@@ -27,7 +27,7 @@ export default class PointPresenter {
   init(point) {
     this.#point = point;
     this.#destination = this.#pointsModel.getDestinationById(this.#point.destination);
-    this.#destinations = [...this.#pointsModel.destinations];
+    this.#destinations = structuredClone(this.#pointsModel.destinations);
     this.#offers = this.#getOffers(this.#point.type);
 
     const prevPointComponent = this.#pointComponent;
@@ -107,6 +107,13 @@ export default class PointPresenter {
     this.#pointEditComponent.shake(resetFormState);
   }
 
+  resetMode() {
+    if (this.#mode !== PointMode.VIEW) {
+      this.#pointEditComponent.reset(this.#point);
+      this.#togglePointMode();
+    }
+  }
+
   #getOffers = (type) => this.#pointsModel.getOffersByType(type);
 
   #togglePointMode() {
@@ -124,21 +131,6 @@ export default class PointPresenter {
     }
   }
 
-  resetMode() {
-    if (this.#mode !== PointMode.VIEW) {
-      this.#pointEditComponent.reset(this.#point);
-      this.#togglePointMode();
-    }
-  }
-
-  #documentKeydownHandler = (evt) => {
-    if (isEscKey(evt)) {
-      evt.preventDefault();
-      this.#pointEditComponent.reset(this.#point);
-      this.#togglePointMode();
-    }
-  };
-
   #handleRollupClick = () => {
     if (this.#mode === PointMode.VIEW) {
       this.#handleModeChange();
@@ -148,16 +140,24 @@ export default class PointPresenter {
   };
 
   #handleFormSubmit = (update) => {
-    const isPatchUpdate = update.type !== this.#point.type || update.destination !== this.#point.destination;
-    this.#handleDataChange(UserAction.UPDATE_POINT, isPatchUpdate ? UpdateType.PATCH : UpdateType.MINOR, update);
-    // this.#togglePointMode();
+    const isPatchUpdate = update.basePrice === this.#point.basePrice && update.dateFrom.toISOString() === this.#point.dateFrom.toISOString() && update.dateTo.toISOString() === this.#point.dateTo.toISOString() && JSON.stringify(update.offers) === JSON.stringify(this.#point.offers) && update.destination === this.#point.destination;
+
+    this.#handleDataChange(UserAction.UPDATE_POINT, isPatchUpdate ? UpdateType.PATCH : UpdateType.MAJOR, update);
   };
 
-  #handleDeleteClick = (task) => {
-    this.#handleDataChange(UserAction.DELETE_POINT, UpdateType.MINOR, task);
+  #handleDeleteClick = (point) => {
+    this.#handleDataChange(UserAction.DELETE_POINT, UpdateType.MINOR, point);
   };
 
   #handleFavoriteClick = () => {
     this.#handleDataChange(UserAction.UPDATE_POINT, UpdateType.PATCH, {...this.#point, isFavorite: !this.#point.isFavorite});
+  };
+
+  #documentKeydownHandler = (evt) => {
+    if (isEscKey(evt)) {
+      evt.preventDefault();
+      this.#pointEditComponent.reset(this.#point);
+      this.#togglePointMode();
+    }
   };
 }

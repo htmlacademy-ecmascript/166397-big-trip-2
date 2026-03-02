@@ -4,18 +4,21 @@ import { remove, render, RenderPosition } from '../framework/render';
 import { isEscKey } from '../utils/common';
 
 export default class NewPointPresenter {
-  #pointsListContainer = null;
+  #boardContainer = null;
+  #pointsListComponent = null;
   #handleDataChange = null;
   #handleDestroy = null;
   #pointsModel = null;
   #destinations = null;
-
   #pointEditComponent = null;
+  #getEmptyComponent = null;
 
-  constructor({pointsListContainer, onDataChange, onDestroy, pointsModel}) {
-    this.#pointsListContainer = pointsListContainer;
+  constructor({boardContainer, pointsListComponent, onDataChange, onDestroy, getEmptyComponent, pointsModel}) {
+    this.#boardContainer = boardContainer;
+    this.#pointsListComponent = pointsListComponent;
     this.#handleDataChange = onDataChange;
     this.#handleDestroy = onDestroy;
+    this.#getEmptyComponent = getEmptyComponent;
     this.#pointsModel = pointsModel;
   }
 
@@ -24,7 +27,12 @@ export default class NewPointPresenter {
       return;
     }
 
-    this.#destinations = [...this.#pointsModel.destinations];
+    if (!this.#pointsModel.points.length) {
+      remove(this.#getEmptyComponent());
+      render(this.#pointsListComponent, this.#boardContainer);
+    }
+
+    this.#destinations = structuredClone(this.#pointsModel.destinations);
 
     this.#pointEditComponent = new PointEditView({
       destinations: this.#destinations,
@@ -34,7 +42,7 @@ export default class NewPointPresenter {
       isNewPoint: true
     });
 
-    render(this.#pointEditComponent, this.#pointsListContainer, RenderPosition.AFTERBEGIN);
+    render(this.#pointEditComponent, this.#pointsListComponent.element, RenderPosition.AFTERBEGIN);
 
     document.addEventListener('keydown', this.#escKeydownHandler);
   }
@@ -50,6 +58,11 @@ export default class NewPointPresenter {
     this.#pointEditComponent = null;
 
     document.removeEventListener('keydown', this.#escKeydownHandler);
+
+    if (!this.#pointsModel.points.length) {
+      remove(this.#pointsListComponent);
+      render(this.#getEmptyComponent(), this.#boardContainer);
+    }
   }
 
   setSaving() {
@@ -74,7 +87,7 @@ export default class NewPointPresenter {
   #getOffers = (type) => this.#pointsModel.getOffersByType(type);
 
   #formSubmitHandler = (point) => {
-    this.#handleDataChange(UserAction.ADD_POINT, UpdateType.MINOR, point);
+    this.#handleDataChange(UserAction.ADD_POINT, UpdateType.MAJOR, point);
   };
 
   #deleteClickHandler = () => {
