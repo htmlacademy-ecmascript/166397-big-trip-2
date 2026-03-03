@@ -36,7 +36,7 @@ export default class TripInfoPresenter {
 
   #renderTripInfoMain() {
     this.#tripComponent = new TripView({
-      trip: this.#pointsModel.trip,
+      destinationsNames: this.#pointsModel.destinationsNames,
       dateStart: this.#pointsModel.dateStart,
       dateEnd: this.#pointsModel.dateEnd,
     });
