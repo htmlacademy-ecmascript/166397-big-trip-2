@@ -3,8 +3,8 @@ import { humanizeTripDates } from '../utils/common';
 
 const MAX_TITLE_LENGTH = 3;
 
-function createTripTemplate(trip, dateStart, dateEnd) {
-  const title = trip.length <= MAX_TITLE_LENGTH ? trip.join(' &mdash; ') : `${trip[0]} &mdash; ... &mdash; ${trip[trip.length - 1]}`;
+function createTripTemplate(destinationsNames, dateStart, dateEnd) {
+  const title = destinationsNames.length <= MAX_TITLE_LENGTH ? destinationsNames.join(' &mdash; ') : `${destinationsNames[0]} &mdash; ... &mdash; ${destinationsNames[destinationsNames.length - 1]}`;
   const datesTemplate = dateStart && dateEnd ? humanizeTripDates(dateStart, dateEnd) : '';
 
   return (
@@ -16,18 +16,18 @@ function createTripTemplate(trip, dateStart, dateEnd) {
 }
 
 export default class TripView extends AbstractView {
-  #trip = [];
+  #destinationsNames = [];
   #dateStart = null;
   #dateEnd = null;
 
-  constructor({trip, dateStart, dateEnd} = {}) {
+  constructor({destinationsNames, dateStart, dateEnd} = {}) {
     super();
-    this.#trip = trip;
+    this.#destinationsNames = destinationsNames;
     this.#dateStart = dateStart;
     this.#dateEnd = dateEnd;
   }
 
   get template() {
-    return createTripTemplate(this.#trip, this.#dateStart, this.#dateEnd);
+    return createTripTemplate(this.#destinationsNames, this.#dateStart, this.#dateEnd);
   }
 }

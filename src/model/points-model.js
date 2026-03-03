@@ -27,7 +27,7 @@ export default class PointsModel extends Observable {
     return this.#offers;
   }
 
-  get trip() {
+  get destinationsNames() {
     return this.points.map((point) => this.getDestinationById(point.destination).name);
   }
 
